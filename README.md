@@ -98,6 +98,76 @@ Another look at the volatility is shown in Figure 1.3 where the squared log retu
 are
 plotted. From this graph the high volatility of the SBI is evident during the periods
 mentioned above.
+################################
+
+
+
+One of the assumptions of the ARMA model is that the error term are either strongly or weakly stationary. 
+
+
+The problem is that in real life. This assumption is not always satisfied. Indeed, when looking financial data such as stock market data (AAPL, TESLA, GOOGL) or currency data (EUR/USD, GBP/USD), even indices data ( S&P 500, DAX 30, US30, NASDAQ 100 etc.) and cryptocurrency. Usually these data display an error term which presents a sort of stochastic variation of their volatility over time, meaning that considering the stationarity assumption will lead to a misspecification of the model estimation and therefore will lead to a bad forecast. 
+
+
+GARCH models are usually the one considering such heteroskedasticity of the error terms and the stochastic change of their related volatility. In this post I will describe a simplified version of the GARCH model, also I will show how to estimate such model setting, how to interpret or read the results and how to find the optimal setting.
+
+
+### GARCH Model Setting
+
+GARCH stands for Generalized Autoregressive Conditional Heteroskedasticity Models. GARCH models are commonly used to estimate the volatility of returns for stocks, currencies, indices cryptocurrencies. Professional traders use this tool to price assets and detect which asset will potentially provide the best return in their portfolio. Also they can use this tool to adjust their portfolio allocation and risk management. 
+
+
+There exist a large variety of GARCH model : Standard GARCH (SGARCH), Nonlinear GARCH (NGARCH), Nonlinear Asymetric GARCH (NAGARCH), Integrated GARCH (IGARCH), Exponential GARCH (EGARCH), GARCH in Mean (GARCH-M), Quadratic GARCH (QGARCH), Glosten-Jagannathan-Runke GARCH (GJR-GARCH), Treshold GARCH (TGARCH), Family GARCH (FGARCH), Continuous-time GARCH (COGARCH), Zero drift GARCH (ZDGARCH) etc. I will present only two of these variants : the standard GARCH and the GJR-GARCH models.
+
+
+### The standard GARCH Model
+
+To model the GARCH model, we need to know first how the ARCH model is set. So let us consider the error term e[t] or the residual from the demeaned return. Then the error term is decomposed into two main terms that are the stochastic term z[t] and the time-dependent standard deviation s[t] such that :
+
+
+R[t] = mu + e[t]
+
+e[t] = s[t]*z[t]. 
+
+R[t] is the variable representing the time series of the return of the stock considered, mu is the mean and e[t] is the error term. The variable z[t] is assumed to be a strong white noise process. If we consider that q is the number of lags for the volatility modelling (ARCH(q)), then, we have
+
+
+
+
+Therefore, an ARCH(q) model means that the time-dependent volatility depends on the first q lag squared values of the error term.
+
+
+Then, based on the ARCH(q) model, we can define the model setting of the GARCH. Indeed, the GARCH model is considered when the error variance s[t] is assumed to follow an ARMA process. In that situation, the GARCH(p,q) model with p the number of lags of the s[t] terms and q the number of lags for the ARCH terms e[t]^2. 
+
+
+Therefore, the main difference between the GARCH model and the ARCH model is that the GARCH model consider also the volatility of the previous period, while the ARCH model do not. This is truly important as in the financial market we can usually observe mean reverting patterns of the instruments/variables and this mean-reverting pattern can in some case could happen by respecting a certain average range, meaning that the volatility of the previous periods should be considered.
+
+
+
+
+Then, a GARCH(1,1) is such that 
+
+
+
+and the ARCH(1) model is nothing else than the GARCH(0,1) model.
+
+
+The particularity of the standard GARCH model is that we consider that the conditional error term follows a normal distribution. This is not always the case for all types of data. We usually observe in the financial data more skewed data.  Therefore, we should also consider checking if the residuals follow that pattern. The GARCH model with skewed student t-distribution (STTD) is usually considered as an alternative to the normal distribution in order to check if we have a better model fitting. 
+
+
+### Model Estimation
+
+The estimation of the GARCH model is very simple. Indeed considering a GARCH(p,q) model, we have 4 steps :
+
+Estimate the AR(q) model for the returns. and get the residuals e[t]
+
+Construct the time series of the squared residuals, e[t]^2.
+
+Compute and plot the autocorrelation of the squared rediduals e[t]^2.
+
+Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based on one of the specified model.
+
+
+
 
 # References
 - https://www.idrisstsafack.com/post/garch-models-with-r-programming-a-practical-example-with-tesla-stock
