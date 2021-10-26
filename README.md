@@ -1,7 +1,7 @@
 # NIFTY-Share-Market-Price-Prediction
 Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
-
+<!-- 
 
 # Content:
 - `[a] Introduction `
@@ -20,7 +20,7 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
     - `[D] Observation of the residuals after fitting ARIMA model`
 - `[k] Square Log-Returns to observe Volatility`
 - `[l] ACF and PACF of the sqr-Log-Returns`
-- `[m] Check if Volatility is present`
+- `[m] Check if Volatility [ARCH effect] is present`
     - `[a] ARCH test`
     - `[b] Monthly rolling average volatility`
 - `[n] GARCH model selection:`
@@ -31,40 +31,42 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 - `[o] Forcasting with the best model`
 - `[p] References`
 
-# Introduction:
-Time series analysis can indeed be used to predict stock trends. The caveat out here is 100%
-accuracy in prediction is not possible but still using time series analysis we can develop some
-model which will give us an idea or a prediction of how the next few days stock price would
-be. In this project we are going to analyze and implement different models step by step in
-order to get a model which would be best suited for prediction or forecasting purpose. We
-use the log return of the stock prices of each stock of the NIFTY50 (Banking Sector), i.e. SBI,
-HDFC and AXIS Banks and then try to fit a traditional model i.e. ARMA model and found the
-best model according to the AIC and BIC values and again check whether there is any ARCH
-effect or not i.e. to check for the presence of Heteroskedasticity in the data. If present then
-we model the variance part through ARCH and GARCH model and found the best mean and
-variance model which would capture all the cluster volatility and the bursts in the data and
-would forecast appropriately. These are done for each of the stocks and found that SBI and
-AXIS bank uses ARCH model to model the variance but in not dependent on the previous
-variances in the final model. While in case of HDFC, we have to use GARCH model to model
-the variance and it depends on the previous variance to get a good fit. Hence at the end of
-the project we get the best models for each stock which are ready to be used to get a good
-forecast.
-Stock markets are where individual and institutional investors come together to buy and sell
-shares in a public venue. Nowadays these exchanges exist as electronic marketplaces. The
-supply and demand helps to determine the price for each security or the levels at which
-stock market participants - investors and traders - are willing to buy and sell. A stock or
-share (also known as a company’s “equity”) is a financial instrument that represents
-ownership in a company. There are many indexes out of which NIFTY 50 is a diversified 50
-stock index accounting or 13 sectors of the economy. It is used for a variety of purposes
-such as benchmarking fund portfolios, index based derivatives and index funds. There are
-two main stock exchanges in India that make up the stock markets. One of them is Bombay
-Stock Exchange (BSE) and the other one is the National Stock Exchange (NSE). NIFTY 50 is
-owned and managed by NSE Indices Limited (formerly known as India Index Services &
-Product Limited) (NSE Indices). NSE Indices is India’s specialized company focused upon the
-index as a core product. So in this project we are going to do a time series analysis on one of
-the sector of the NIFTY 50 i.e. the Banking sector and we are going to take only the daily
-closing prices of 3 banks, namely SBI, HDFC Bank and AXIS Bank.
+            “I will tell you how to become rich. Close the doors. Be fearful when others are greedy.
+            Be greedy when others are fearful.”                                – By Warren Buffett
 
+###
+
+# Introduction:
+ In time series analysis, time is a significant variable of the data. Times series analysis helps us study our world and learn how we progress within it. Time series analysis can indeed be used to predict stock trends. Stock markets are where individual and institutional investors come together to buy and sell shares in a public venue. Nowadays these exchanges exist as electronic marketplaces. The supply and demand helps to determine the price for each security or the levels at which stock market participants - investors and traders - are willing to buy and sell. A stock or share (also known as a company’s “equity”) is a financial instrument that represents ownership in a company. There are many indexes out of which NIFTY is a diversified  stock index. It is used for a variety of purposes such as benchmarking fund portfolios, index based derivatives and index funds. There are two main stock exchanges in India that make up the stock markets. One of them is Bombay Stock Exchange (BSE) and the other one is the National Stock Exchange (NSE). NIFTY is owned and managed by NSE Indices Limited (formerly known as India Index Services & Product Limited) (NSE Indices). NSE Indices is India’s specialized company focused upon the index as a core product. In this project we are going to analyze and implement different models step by step in order to get a model which would be best suited for prediction or forecasting purpose. We use the log return of the stock prices of some stock of the NIFTY, i.e. BANK, OIL,IT and METAL Banks and  we are going to take only the daily closing prices of then and then try to fit a traditional model i.e. ARMA model and found the best model according to the AIC and BIC values and again check whether there is any ARCH effect or not i.e. to check for the presence of Heteroskedasticity in the data. If present then we model the variance part through ARCH and GARCH model and found the best mean and variance model which would capture all the cluster volatility and the bursts in the data and would forecast appropriately. The caveat out here is 100% accuracy in prediction is not possible but still using time series analysis we can develop some model which will give us an idea or a prediction of how the next few days stock price would be.
+
+# What is time series analysis?
+
+Time series analysis is a statistical technique that deals with time series data, or trend analysis.  Time series data means that data is in a series of  particular time periods or intervals. This is a specific way in which analysts record data points at consistent intervals over a set period of time rather than just recording the data points intermittently or randomly. What sets time series data apart from other data is that the analysis can show how variables change over time. In other words, time is a crucial variable because it shows how the data adjusts over the course of the data points as well as the final results. It provides an additional source of information and a set order of dependencies between the data.
+    Time series analysis typically requires a large number of data points to ensure consistency and reliability. An extensive data set ensures you have a representative sample size and that analysis can cut through noisy data. It also ensures that any trends or patterns discovered are not outliers and can account for seasonal variance. Additionally, time series data can be used for forecasting—predicting future data based on historical data.
+
+    Examples of time series analysis in action include:
+    Weather data
+    Rainfall measurements
+    Temperature readings
+    Heart rate monitoring (EKG)
+    Brain monitoring (EEG)
+    Quarterly sales
+    Stock prices
+    Automated stock trading
+    Industry forecasts
+    Interest rates
+
+ 
+# `[c] Difference from Regression analysis :`
+
+
+
+
+But Regression can also be applied to non-ordered series where a target variable is dependent on values taken by other variables. These other variables are called as Features. When making a prediction, new values of Features are provided and Regression provides an answer for the Target variable.So unlike time series analysis, we need some feature to predic. Essentially, Regression is a kind of intrapolation technique.
+Regression can be applied to Time-series problems as well. e.g. Auto-regression.
+So, in a simple way,
+Time-series forecast is Extrapolation [ out side the given data ] and realation between target variable and time.
+Regression is Intrapolation [ inside the given data also ] and relation between target variable and features.
 
 2. Data Description
 Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
@@ -167,7 +169,13 @@ Compute and plot the autocorrelation of the squared rediduals e[t]^2.
 Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based on one of the specified model.
 
 
-
+-->
 
 # References
 - https://www.idrisstsafack.com/post/garch-models-with-r-programming-a-practical-example-with-tesla-stock
+- https://www.tableau.com/learn/articles/time-series-analysis
+
+
+
+
+
