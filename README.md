@@ -8,9 +8,9 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 - `[b] What is Time Series Analysis`
 - `[c] Difference from Regression analysis`
 - `[d] Stationarity, White Noise, IID`
-- `[e] About Finance Data and Datasets`
-- `[f] Which model and why?`
-- `[g] Steps to follow serially`
+- `[e] Steps to follow serially`
+- `[f] About Finance Data and Datasets`
+- `[g] Which model and why?`
 - `[h] Data visualization [EDA]`
 - `[i] Log returns`
 - `[j] Analysis on Log-Returns`
@@ -66,13 +66,9 @@ So, in a simple way,
 -->
 # `[d] Stationarity, White Noise, IID`
 
-* Stationarity:
-A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time.
-************
-A common assumption in many time series techniques is that the data are stationary.
-A stationary process has the property that the mean, variance and autocorrelation structure do not change over time. Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).
-
-If the time series is not stationary, we can often transform it to stationarity with one of the following techniques.
+- [ ] `Stationarity:`
+A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time. A common assumption in many time series techniques is that the data are stationary.Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).\
+- [ ] Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data with one of the following techniques:
 * We can difference the data. That is, given the series Zt, we create the new series
 Yi=Zi−Zi−1.
 The differenced data will contain one less point than the original data. Although you can difference the data more than once, one difference is usually sufficient.
@@ -80,8 +76,7 @@ The differenced data will contain one less point than the original data. Althoug
 * For non-constant variance, taking the logarithm or square root of the series may stabilize the variance. For negative data, you can add a suitable constant to make all the data positive before applying the transformation. This constant can then be subtracted from the model to obtain predicted (i.e., the fitted) values and forecasts for future points.
 The above techniques are intended to generate series with constant location and scale. Although seasonality also violates stationarity, this is usually explicitly incorporated into the time series model.
 
-************
-Types of Stationary
+- [ ] Types of Stationary
 Models can show different types of stationarity:
 
 **Strict stationarity** means that the joint distribution of any moments of any degree (e.g. expected values, variances, third order and higher moments) within the process is never dependent on time. This definition is in practice too strict to be used for any real-life model.
@@ -90,51 +85,22 @@ Models can show different types of stationarity:
 **Trend-stationary** models fluctuate around a deterministic trend (the series mean). These deterministic trends can be linear or quadratic, but the amplitude (height of one oscillation) of the fluctuations neither increases nor decreases across the series.
 **Difference-stationary** models are models that need one or more differencings to become stationary (see Transforming Models below).
 
-It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If you aren’t sure about the stationarity of a model, a hypothesis test can help. You have several options for testing, including:
-
+- [ ] It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If you aren’t sure about the stationarity of a model, a hypothesis test can help. You have several options for testing, including:
 * Unit root tests (e.g. Augmented Dickey-Fuller (ADF) test or Zivot-Andrews test),
 * A KPSS test (run as a complement to the unit root tests).
 * A run sequence plot,
-* The Priestley-Subba Rao (PSR) Test or Wavelet-Based Test, which are less common tests based on spectrum analysis.
+* The Priestley-Subba Rao (PSR) Test or Wavelet-Based Test, which are less common tests based on spectrum analysis.\
+Though we will use only the Unit root test here. (To know more about it)[https://www.investopedia.com/articles/trading/07/stationary.asp]
 
-
-Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. The results obtained by using non-stationary time series may be spurious in that they may indicate a relationship between two variables where one does not exist. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data. In contrast to the non-stationary process that has a variable variance and a mean that does not remain near, or returns to a long-run mean over time, the stationary process reverts around a constant long-term mean and has a constant variance independent of time.
-
-Before we get to the point of transformation for the non-stationary financial time series data, we should distinguish between the different types of non-stationary processes. This will provide us with a better understanding of the processes and allow us to apply the correct transformation. Examples of non-stationary processes are random walk with or without a drift (a slow steady change) and deterministic trends (trends that are constant, positive, or negative, independent of time for the whole life of the series). (To know more about it)[https://www.investopedia.com/articles/trading/07/stationary.asp]
-
-- White Noise and IID:
-a noise sequence (et) is a white noise sequence if\
+- [ ] `White Noise and IID:`
+A white noise process is only defined by the first 2 moments. A noise sequence (et) is a white noise sequence if\
 the expectation of each element is zero, E(et) = 0\
 the variance of each element is finite, Var(et) < infinity\
 the elements are uncorrelated, Cor(et, es) = 0\
-The noise sequence would be an iid noise if in addition the elements are not just uncorrelated but also independet. So therefore every iid noise is also white noise, but the reverse is just true for Gaussian white noise sequence.
-iid is a special case of white noise. the difference is that for iid noise we assume each sample has the same probability distribution while, white noise samples could follow different probability distribution.
-The concept of iid is used  when when we make assumptions about the error, e.g. in regression analysis when we say that the error terms are iid following normal with mean 0 and a common variance sigma^2. However the concept of white noise is used in time series analysis, when we make more complicated models  like random walk or ARMA or ARIMA models
+But it does not specify higher moments of the distribution, like skewness and kurtosis. IID white noise provides that the sample has the same distribution, so also higher moments have to be the same. The noise sequence would be an iid noise if in addition the elements are not just uncorrelated but also independet. So therefore every iid noise is also white noise, but the reverse is just true for Gaussian white noise sequence. A Gaussian white noise implies a normal distribution of et and a normal distribution is completely defined by the first 2 moments. So in this case: White noise process = Iid white noise.  IID is a special case of white noise. So, the difference is that for iid noise we assume each sample has the same probability distribution while, white noise samples could follow different probability distribution.
+The concept of iid is used when we make assumptions about the error, e.g. in regression analysis when we say that the error terms are iid following normal with mean 0 and a common variance sigma^2. However the concept of white noise is used in time series analysis, when we make more complicated models like random walk or ARMA or ARIMA models.
 
-A white noise process is only defined by the first 2 moments, like Stephan showed:
-- A zero mean E[et]=0
-- A fixed variance Sigma2 V[et]=σ2
-- All other elements are uncorrelated Cov[etes]=0
-But it does not specify higher moments of the distribution, like skewness and kurtosis. Iid white noise provides that the sample has the same distribution, so also higher moments have to be the same.
-A Gaussian white noise implies a normal distribution of et and a normal distribution is completely defined by the first 2 moments. So in this case: White noise process = Iid white noise
-
-
-
-# `[e] About Finance Data and Datasets`
-
-NFI is associated with information that is not expressed in financial terms. ... NFI is a system of information that does not necessarily derive from the accounting system. NFI is not related to financial and economic data. 
-
-Using non-stationary time series data in financial models produces unreliable and spurious results and leads to poor understanding and forecasting. The solution to the problem is to transform the time series data so that it becomes stationary. If the non-stationary process is a random walk with or without a drift, it is transformed to stationary process by differencing. On the other hand, if the time series data analyzed exhibits a deterministic trend, the spurious results can be avoided by detrending.
-
-Sometimes the non-stationary series may combine a stochastic and deterministic trend at the same time and to avoid obtaining misleading results both differencing and detrending should be applied, as differencing will remove the trend in the variance and detrending will remove the deterministic trend.
-### Why Log Returns: 
-https://quantivity.wordpress.com/2011/02/21/why-log-returns/
-https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
-
-# `[f] Which model and why?`
-GARCH model but why?
-
-# `[g] Steps to follow serially:`
+# `[e] Steps to follow serially:`
 The following steps are to be followed:
 1. Visualization of data
 2. Removing trend and seasonality
@@ -144,8 +110,19 @@ The following steps are to be followed:
 6. if present then to model the variance use GARCH model
 7. choosing best ARMIA + GARCH model to model mean and variance at the same time.
 
+# `[f] About Finance Data and Datasets`
 
+NFI(non financial information) is associated with information that is not expressed in financial terms. NFI is a system of information that does not necessarily derive from the accounting system. NFI is not related to financial and economic data. 
 
+Using non-stationary time series data in financial models produces unreliable and spurious results and leads to poor understanding and forecasting. The solution to the problem is to transform the time series data so that it becomes stationary. If the non-stationary process is a random walk with or without a drift, it is transformed to stationary process by differencing. On the other hand, if the time series data analyzed exhibits a deterministic trend, the spurious results can be avoided by detrending.
+
+Sometimes the non-stationary series may combine a stochastic and deterministic trend at the same time and to avoid obtaining misleading results both differencing and detrending should be applied, as differencing will remove the trend in the variance and detrending will remove the deterministic trend.
+### Why Log Returns: 
+https://quantivity.wordpress.com/2011/02/21/why-log-returns/
+https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
+
+# `[g] Which model and why?`
+GARCH model but why?
 
 
 2. Data Description
