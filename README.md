@@ -1,7 +1,7 @@
 # NIFTY-Share-Market-Price-Prediction
 Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
-<!-- 
+
 
 # Content:
 - `[a] Introduction `
@@ -63,7 +63,7 @@ Again, Regression can also be applied to non-ordered series where a target varia
 So, in a simple way,
 * Time-series forecast is Extrapolation [ out side the given data ] and realation between target variable and time.
 * Regression is Intrapolation [ inside the given data also ] and relation between target variable and features.
--->
+
 # `[d] Stationarity, White Noise, IID`
 
 - [ ] `Stationarity:`
