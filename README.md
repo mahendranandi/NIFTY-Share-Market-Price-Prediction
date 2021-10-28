@@ -3,118 +3,68 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
 
 
-# Content:
-- `[a] Introduction `
-- `[b] What is Time Series Analysis`
-- `[c] Difference from Regression analysis`
-- `[d] Stationarity, White Noise, IID`
-- `[e] Steps to follow serially`
-- `[f] About Finance Data and Datasets`
-- `[g] Which model and why?`
-- `[h] Data visualization [EDA]`
-- `[i] Log returns`
-- `[j] Analysis on Log-Returns`
-    - `[a] Augmented Dicky Fuller test [Unit root test]`
-    - `[b] ACF, PACF of Log-returns `
-    - `[c] Mean model [ARIMA] selection `
-    - `[D] Observation of the residuals after fitting ARIMA model`
-- `[k] Square Log-Returns to observe Volatility`
-- `[l] ACF and PACF of the sqr-Log-Returns`
-- `[m] Check if Volatility [ARCH effect] is present`
-    - `[a] ARCH test`
-    - `[b] Monthly rolling average volatility`
-- `[n] GARCH model selection:`
-    - `[a] Following the distribution of the log-returns`
-    - `[b] Guess about the order of the model ( IF POSSIBLE )`
-    - `[c] AIC,AICc,BIC value`
-    - `[d] choosing the best model `
-- `[o] Forcasting with the best model`
-- `[p] References`
-
-            “I will tell you how to become rich. Close the doors. Be fearful when others are greedy.
-            Be greedy when others are fearful.”                                – By Warren Buffett
-
-###
-
-# `[a] Introduction: `
- In time series analysis, time is a significant variable of the data. Times series analysis helps us study our world and learn how we progress within it. Time series analysis can indeed be used to predict stock trends. Stock markets are where individual and institutional investors come together to buy and sell shares in a public venue. Nowadays these exchanges exist as electronic marketplaces. The supply and demand helps to determine the price for each security or the levels at which stock market participants - investors and traders - are willing to buy and sell. A stock or share (also known as a company’s “equity”) is a financial instrument that represents ownership in a company. There are many indexes out of which NIFTY is a diversified  stock index. It is used for a variety of purposes such as benchmarking fund portfolios, index based derivatives and index funds. There are two main stock exchanges in India that make up the stock markets. One of them is Bombay Stock Exchange (BSE) and the other one is the National Stock Exchange (NSE). NIFTY is owned and managed by NSE Indices Limited (formerly known as India Index Services & Product Limited) (NSE Indices). NSE Indices is India’s specialized company focused upon the index as a core product. In this project we are going to analyze and implement different models step by step in order to get a model which would be best suited for prediction or forecasting purpose. We use the log return of the stock prices of some stock of the NIFTY, i.e. BANK, OIL,IT and METAL Banks and  we are going to take only the daily closing prices of then and then try to fit a traditional model i.e. ARMA model and found the best model according to the AIC and BIC values and again check whether there is any ARCH effect or not i.e. to check for the presence of Heteroskedasticity in the data. If present then we model the variance part through ARCH and GARCH model and found the best mean and variance model which would capture all the cluster volatility and the bursts in the data and would forecast appropriately. The caveat out here is 100% accuracy in prediction is not possible but still using time series analysis we can develop some model which will give us an idea or a prediction of how the next few days stock price would be.
-
-# `[b] What is Time Series Analysis?`
-
-Time series analysis is a statistical technique that deals with time series data, or trend analysis.  Time series data means that data is in a series of  particular time periods or intervals. This is a specific way in which analysts record data points at consistent intervals over a set period of time rather than just recording the data points intermittently or randomly. What sets time series data apart from other data is that the analysis can show how variables change over time. In other words, time is a crucial variable because it shows how the data adjusts over the course of the data points as well as the final results. It provides an additional source of information and a set order of dependencies between the data.
-    Time series analysis typically requires a large number of data points to ensure consistency and reliability. An extensive data set ensures you have a representative sample size and that analysis can cut through noisy data. It also ensures that any trends or patterns discovered are not outliers and can account for seasonal variance. Additionally, time series data can be used for forecasting—predicting future data based on historical data.
-
-    Examples of time series analysis in action include:
-    Weather data
-    Rainfall measurements
-    Temperature readings
-    Heart rate monitoring (EKG)
-    Brain monitoring (EEG)
-    Quarterly sales
-    Stock prices
-    Automated stock trading
-    Industry forecasts
-    Interest rates
-
- 
-# `[c] Difference from Regression analysis :`
-We have to follow first that Regression is a mathematical model to make relation between variables, and it is being used in Time series analysis also to remove trend. So, regression helps us to get the trend, and after removing trend( with the help of regression) and seasonality by some other method( like differencing) we have to check wheathere the series is Stationary(discussed later) or not and then we can approach for the time series model accordingly. we can even think of time series as an extension of linear regression. Time series uses terms such as autocorrelation and moving average to summarize historical information of the y variable with the hope that these features better predict future y. So, there is a difference one should be clear about.
-Again, Regression can also be applied to non-ordered series where a target variable is dependent on values taken by other variables. These other variables are called as Features. When making a prediction, new values of Features are provided and Regression provides an answer for the Target variable.So unlike time series analysis, we need some feature to predic. Essentially, Regression is a kind of intrapolation technique. Regression can be applied to Time-series problems as well. e.g. Auto-regression.
-So, in a simple way,
-* Time-series forecast is Extrapolation [ out side the given data ] and realation between target variable and time.
-* Regression is Intrapolation [ inside the given data also ] and relation between target variable and features.
-
-# `[d] Stationarity, White Noise, IID`
-
-- [ ] `Stationarity:`
-A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time. A common assumption in many time series techniques is that the data are stationary.Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).\
-- [ ] Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data with one of the following techniques:
-* We can difference the data. That is, given the series Zt, we create the new series
-Yi=Zi−Zi−1.
-The differenced data will contain one less point than the original data. Although you can difference the data more than once, one difference is usually sufficient.
-* If the data contain a trend, we can fit some type of curve to the data and then model the residuals from that fit. Since the purpose of the fit is to simply remove long term trend, a simple fit, such as a straight line, is typically used.
-* For non-constant variance, taking the logarithm or square root of the series may stabilize the variance. For negative data, you can add a suitable constant to make all the data positive before applying the transformation. This constant can then be subtracted from the model to obtain predicted (i.e., the fitted) values and forecasts for future points.
-The above techniques are intended to generate series with constant location and scale. Although seasonality also violates stationarity, this is usually explicitly incorporated into the time series model.
-
-- [ ] Types of Stationary
-Models can show different types of stationarity:
-
-**Strict stationarity** means that the joint distribution of any moments of any degree (e.g. expected values, variances, third order and higher moments) within the process is never dependent on time. This definition is in practice too strict to be used for any real-life model.
-**First-order** stationarity series have means that never changes with time. Any other statistics (like variance) can change.
-**Second-order** stationarity (also called weak stationarity) time series have a constant mean, variance and an autocovariance that doesn’t change with time. Other statistics in the system are free to change over time. This constrained version of strict stationarity is very common.
-**Trend-stationary** models fluctuate around a deterministic trend (the series mean). These deterministic trends can be linear or quadratic, but the amplitude (height of one oscillation) of the fluctuations neither increases nor decreases across the series.
-**Difference-stationary** models are models that need one or more differencings to become stationary (see Transforming Models below).
-
-- [ ] It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If you aren’t sure about the stationarity of a model, a hypothesis test can help. You have several options for testing, including:
-* Unit root tests (e.g. Augmented Dickey-Fuller (ADF) test or Zivot-Andrews test),
-* A KPSS test (run as a complement to the unit root tests).
-* A run sequence plot,
-* The Priestley-Subba Rao (PSR) Test or Wavelet-Based Test, which are less common tests based on spectrum analysis.\
-Though we will use only the Unit root test here. (To know more about it)[https://www.investopedia.com/articles/trading/07/stationary.asp]
-
-- [ ] `White Noise and IID:`
-A white noise process is only defined by the first 2 moments. A noise sequence (et) is a white noise sequence if\
-the expectation of each element is zero, E(et) = 0\
-the variance of each element is finite, Var(et) < infinity\
-the elements are uncorrelated, Cor(et, es) = 0\
-But it does not specify higher moments of the distribution, like skewness and kurtosis. IID white noise provides that the sample has the same distribution, so also higher moments have to be the same. The noise sequence would be an iid noise if in addition the elements are not just uncorrelated but also independet. So therefore every iid noise is also white noise, but the reverse is just true for Gaussian white noise sequence. A Gaussian white noise implies a normal distribution of et and a normal distribution is completely defined by the first 2 moments. So in this case: White noise process = Iid white noise.  IID is a special case of white noise. So, the difference is that for iid noise we assume each sample has the same probability distribution while, white noise samples could follow different probability distribution.
-The concept of iid is used when we make assumptions about the error, e.g. in regression analysis when we say that the error terms are iid following normal with mean 0 and a common variance sigma^2. However the concept of white noise is used in time series analysis, when we make more complicated models like random walk or ARMA or ARIMA models.
-
-# `[e] Steps to follow serially:`
-The following steps are to be followed:
-1. Visualization of data
-2. Removing trend and seasonality
-3. chechiking stationarity of the residuals
-4. fitting best ARIMA model
-5. if residuals are stationary but there is still volatility is present check if ARCH effect is present or not
-6. if present then to model the variance use GARCH model
-7. choosing best ARMIA + GARCH model to model mean and variance at the same time.
 
 # `[f] About Finance Data and Datasets`
-
+A financial information is a formal record of the financial activities of a business, person, or other entity. Relevant financial information is presented in a structured manner and in a form easy to understand. Financial data consists of pieces or sets of information related to the financial health of a business. The pieces of data are used by internal management to analyze business performance and determine whether tactics and strategies must be altered. People and organizations outside a business will also use financial data reported by the business to judge its credit worthiness, decide whether to invest in the business, and determine whether the business is complying with government regulations.  
 NFI(non financial information) is associated with information that is not expressed in financial terms. NFI is a system of information that does not necessarily derive from the accounting system. NFI is not related to financial and economic data. 
 
+### When is Log Transformation Necessary for Financial Returns?
+There are a lot of benefits in using the log return or compounded return over the simple one. Some of these are lognormality, raw log equality, and low algorithmic complexity. Finally, use log return when temporal behavior of return is the focus of interest.
+Returns for stock prices are normally distributed but prices are not. They are lognormally distributed (assumed at least and require verification per case).
+ let us discuss when should you use simple returns over compounded returns
+
 Using non-stationary time series data in financial models produces unreliable and spurious results and leads to poor understanding and forecasting. The solution to the problem is to transform the time series data so that it becomes stationary. If the non-stationary process is a random walk with or without a drift, it is transformed to stationary process by differencing. On the other hand, if the time series data analyzed exhibits a deterministic trend, the spurious results can be avoided by detrending.
+
+####################
+
+LINEAR RETURN VS. COMPOUND RETURNS
+The linear return is defined as
+
+![\Large f(x,y)=$\frac{sin(10(x^2+y^2))}{10}](https://latex.codecogs.com/svg.latex?\Large&space;f(x,y)=\frac{sin(10(x^2+y^2))}{10}) 
+
+The formula for Linear Returns
+Linear Return has the remarkable property of being asset-additive. This means that you can aggregate the returns more easily.
+In equation form, if we denote
+
+as the corresponding weights of n securities, the portfolio returns are simply:
+
+Portfolio Return using Linear Returns
+Linear returns are therefore being used by risk and portfolio managers for risk analysis, performance attribution, and portfolio optimization.
+Compound Returns, however, are calculated using the following formula:
+
+Formula for Compounded Returns
+Compounded returns are time-additive. This means that you can add them across time to get the total return over a specified period.
+There are several benefits to using log returns, theoretically and practically. We discuss at least three of them next.
+LOGNORMALITY
+A common assumption for most assets or stocks is that their prices are log-normally distributed. One reason for this is that prices cannot assume a negative value and as the stock price goes closer to 0, the movement becomes smaller.
+Note, however, that when resources or literature mentions that prices are log-normally distributed, some of these meant this formulation:
+
+Formulation of lognormal distribution of prices. The reason for this is that prices change over time and so is the variance of the price. So instead of using the marginal distribution, we are using the conditional distribution.
+What does this mean? If the log of price is normally distributed, then:
+
+A happy benefit of this is that there are a lot of tried-and-tested tools, theories, and methods that can be applied when a variable is normally distributed depending on your objective.
+RAW-LOG RETURN EQUALITY
+When (ri) is small, then:
+
+The approximation is considered good and is relevant for small trades. Try this out using your programming language to check it out.
+You may wonder why go for an approximation if you can calculate the raw returns? For programmers and data scientists, this calculation may be easier to code. But there is another strong reason for using log returns and we discuss it next.
+ALGORITHMIC COMPLEXITY
+Assume for example that a stock is traded, n-times, on a weekly (or daily) basis. To get the compound return:
+
+Clearly, this formula is complicated to translate to code. In addition, we know that the product of two normal variables is not normally distributed.
+The log of return, however, resolves these difficulties naturally.
+Using the formula for the log of returns:
+
+So, to calculate an n-week (or daily) return, we can apply the formula:
+
+We know that we can decompose the equation to:
+
+Thus, the algorithmic complexity is reduced from O(n) multiplications to just an O(1) addition.
+This is extremely helpful for large (n)s.
+Furthermore, probability theory tells us that the sum of normally distributed variables is a normally distributed variable itself.
+
+
+#######################
 
 Sometimes the non-stationary series may combine a stochastic and deterministic trend at the same time and to avoid obtaining misleading results both differencing and detrending should be applied, as differencing will remove the trend in the variance and detrending will remove the deterministic trend.
 ### Why Log Returns: 
@@ -234,5 +184,113 @@ Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based o
 
 
 
+******************************************************************************************************************************************************** 
 
 
+
+# Content:
+- `[a] Introduction `
+- `[b] What is Time Series Analysis`
+- `[c] Difference from Regression analysis`
+- `[d] Stationarity, White Noise, IID`
+- `[e] Steps to follow serially`
+- `[f] About Finance Data and Datasets`
+- `[g] Which model and why?`
+- `[h] Data visualization [EDA]`
+- `[i] Log returns`
+- `[j] Analysis on Log-Returns`
+    - `[a] Augmented Dicky Fuller test [Unit root test]`
+    - `[b] ACF, PACF of Log-returns `
+    - `[c] Mean model [ARIMA] selection `
+    - `[D] Observation of the residuals after fitting ARIMA model`
+- `[k] Square Log-Returns to observe Volatility`
+- `[l] ACF and PACF of the sqr-Log-Returns`
+- `[m] Check if Volatility [ARCH effect] is present`
+    - `[a] ARCH test`
+    - `[b] Monthly rolling average volatility`
+- `[n] GARCH model selection:`
+    - `[a] Following the distribution of the log-returns`
+    - `[b] Guess about the order of the model ( IF POSSIBLE )`
+    - `[c] AIC,AICc,BIC value`
+    - `[d] choosing the best model `
+- `[o] Forcasting with the best model`
+- `[p] References`
+
+            “I will tell you how to become rich. Close the doors. Be fearful when others are greedy.
+            Be greedy when others are fearful.”                                – By Warren Buffett
+
+###
+
+# `[a] Introduction: `
+ In time series analysis, time is a significant variable of the data. Times series analysis helps us study our world and learn how we progress within it. Time series analysis can indeed be used to predict stock trends. Stock markets are where individual and institutional investors come together to buy and sell shares in a public venue. Nowadays these exchanges exist as electronic marketplaces. The supply and demand helps to determine the price for each security or the levels at which stock market participants - investors and traders - are willing to buy and sell. A stock or share (also known as a company’s “equity”) is a financial instrument that represents ownership in a company. There are many indexes out of which NIFTY is a diversified  stock index. It is used for a variety of purposes such as benchmarking fund portfolios, index based derivatives and index funds. There are two main stock exchanges in India that make up the stock markets. One of them is Bombay Stock Exchange (BSE) and the other one is the National Stock Exchange (NSE). NIFTY is owned and managed by NSE Indices Limited (formerly known as India Index Services & Product Limited) (NSE Indices). NSE Indices is India’s specialized company focused upon the index as a core product. In this project we are going to analyze and implement different models step by step in order to get a model which would be best suited for prediction or forecasting purpose. We use the log return of the stock prices of some stock of the NIFTY, i.e. BANK, OIL,IT and METAL Banks and  we are going to take only the daily closing prices of then and then try to fit a traditional model i.e. ARMA model and found the best model according to the AIC and BIC values and again check whether there is any ARCH effect or not i.e. to check for the presence of Heteroskedasticity in the data. If present then we model the variance part through ARCH and GARCH model and found the best mean and variance model which would capture all the cluster volatility and the bursts in the data and would forecast appropriately. The caveat out here is 100% accuracy in prediction is not possible but still using time series analysis we can develop some model which will give us an idea or a prediction of how the next few days stock price would be.
+
+# `[b] What is Time Series Analysis?`
+
+Time series analysis is a statistical technique that deals with time series data, or trend analysis.  Time series data means that data is in a series of  particular time periods or intervals. This is a specific way in which analysts record data points at consistent intervals over a set period of time rather than just recording the data points intermittently or randomly. What sets time series data apart from other data is that the analysis can show how variables change over time. In other words, time is a crucial variable because it shows how the data adjusts over the course of the data points as well as the final results. It provides an additional source of information and a set order of dependencies between the data.
+    Time series analysis typically requires a large number of data points to ensure consistency and reliability. An extensive data set ensures you have a representative sample size and that analysis can cut through noisy data. It also ensures that any trends or patterns discovered are not outliers and can account for seasonal variance. Additionally, time series data can be used for forecasting—predicting future data based on historical data.
+
+    Examples of time series analysis in action include:
+    Weather data
+    Rainfall measurements
+    Temperature readings
+    Heart rate monitoring (EKG)
+    Brain monitoring (EEG)
+    Quarterly sales
+    Stock prices
+    Automated stock trading
+    Industry forecasts
+    Interest rates
+
+ 
+# `[c] Difference from Regression analysis :`
+We have to follow first that Regression is a mathematical model to make relation between variables, and it is being used in Time series analysis also to remove trend. So, regression helps us to get the trend, and after removing trend( with the help of regression) and seasonality by some other method( like differencing) we have to check wheathere the series is Stationary(discussed later) or not and then we can approach for the time series model accordingly. we can even think of time series as an extension of linear regression. Time series uses terms such as autocorrelation and moving average to summarize historical information of the y variable with the hope that these features better predict future y. So, there is a difference one should be clear about.
+Again, Regression can also be applied to non-ordered series where a target variable is dependent on values taken by other variables. These other variables are called as Features. When making a prediction, new values of Features are provided and Regression provides an answer for the Target variable.So unlike time series analysis, we need some feature to predic. Essentially, Regression is a kind of intrapolation technique. Regression can be applied to Time-series problems as well. e.g. Auto-regression.
+So, in a simple way,
+* Time-series forecast is Extrapolation [ out side the given data ] and realation between target variable and time.
+* Regression is Intrapolation [ inside the given data also ] and relation between target variable and features.
+
+# `[d] Stationarity, White Noise, IID`
+
+- [ ] `Stationarity:`
+A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time. A common assumption in many time series techniques is that the data are stationary.Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).\
+- [ ] Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data with one of the following techniques:
+* We can difference the data. That is, given the series Zt, we create the new series
+Yi=Zi−Zi−1.
+The differenced data will contain one less point than the original data. Although you can difference the data more than once, one difference is usually sufficient.
+* If the data contain a trend, we can fit some type of curve to the data and then model the residuals from that fit. Since the purpose of the fit is to simply remove long term trend, a simple fit, such as a straight line, is typically used.
+* For non-constant variance, taking the logarithm or square root of the series may stabilize the variance. For negative data, you can add a suitable constant to make all the data positive before applying the transformation. This constant can then be subtracted from the model to obtain predicted (i.e., the fitted) values and forecasts for future points.
+The above techniques are intended to generate series with constant location and scale. Although seasonality also violates stationarity, this is usually explicitly incorporated into the time series model.
+
+- [ ] Types of Stationary
+Models can show different types of stationarity:
+
+**Strict stationarity** means that the joint distribution of any moments of any degree (e.g. expected values, variances, third order and higher moments) within the process is never dependent on time. This definition is in practice too strict to be used for any real-life model.
+**First-order** stationarity series have means that never changes with time. Any other statistics (like variance) can change.
+**Second-order** stationarity (also called weak stationarity) time series have a constant mean, variance and an autocovariance that doesn’t change with time. Other statistics in the system are free to change over time. This constrained version of strict stationarity is very common.
+**Trend-stationary** models fluctuate around a deterministic trend (the series mean). These deterministic trends can be linear or quadratic, but the amplitude (height of one oscillation) of the fluctuations neither increases nor decreases across the series.
+**Difference-stationary** models are models that need one or more differencings to become stationary (see Transforming Models below).
+
+- [ ] It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If you aren’t sure about the stationarity of a model, a hypothesis test can help. You have several options for testing, including:
+* Unit root tests (e.g. Augmented Dickey-Fuller (ADF) test or Zivot-Andrews test),
+* A KPSS test (run as a complement to the unit root tests).
+* A run sequence plot,
+* The Priestley-Subba Rao (PSR) Test or Wavelet-Based Test, which are less common tests based on spectrum analysis.\
+Though we will use only the Unit root test here. (To know more about it)[https://www.investopedia.com/articles/trading/07/stationary.asp]
+
+- [ ] `White Noise and IID:`
+A white noise process is only defined by the first 2 moments. A noise sequence (et) is a white noise sequence if\
+the expectation of each element is zero, E(et) = 0\
+the variance of each element is finite, Var(et) < infinity\
+the elements are uncorrelated, Cor(et, es) = 0\
+But it does not specify higher moments of the distribution, like skewness and kurtosis. IID white noise provides that the sample has the same distribution, so also higher moments have to be the same. The noise sequence would be an iid noise if in addition the elements are not just uncorrelated but also independet. So therefore every iid noise is also white noise, but the reverse is just true for Gaussian white noise sequence. A Gaussian white noise implies a normal distribution of et and a normal distribution is completely defined by the first 2 moments. So in this case: White noise process = Iid white noise.  IID is a special case of white noise. So, the difference is that for iid noise we assume each sample has the same probability distribution while, white noise samples could follow different probability distribution.
+The concept of iid is used when we make assumptions about the error, e.g. in regression analysis when we say that the error terms are iid following normal with mean 0 and a common variance sigma^2. However the concept of white noise is used in time series analysis, when we make more complicated models like random walk or ARMA or ARIMA models.
+
+# `[e] Steps to follow serially:`
+The following steps are to be followed:
+1. Visualization of data
+2. Removing trend and seasonality
+3. chechiking stationarity of the residuals
+4. fitting best ARIMA model
+5. if residuals are stationary but there is still volatility is present check if ARCH effect is present or not
+6. if present then to model the variance use GARCH model
+7. choosing best ARMIA + GARCH model to model mean and variance at the same time.
