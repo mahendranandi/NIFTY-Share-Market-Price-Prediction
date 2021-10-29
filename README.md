@@ -1,13 +1,49 @@
 
 # `[h] Data visualization [EDA]:`
-Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
-which the stock prices are recorded are in rupees. The time stamp on the data is from 3 rd
-January, 2005 to 28 th December, 2020. The data is collected from the url:
-http://in.yahoo.finance.com
 Finance is a field where time series arises naturally from the evolution of indexes and prices.
-So the financial data which I have worked on the Nifty50 daily stock index (i.e. closing
-prices) of SBI, HDFC Bank and AXIS Bank. So here we have 3 time series. Now we take one
+So the financial data which I have worked on the Nifty daily stock index (i.e. closing
+prices) of IT,METAL,BANK,OIL. So here we have 4 time series. Now we take one
 stock at a time and try to analyze and then fit an appropriate model to forecast.
+
+* Libraries used:
+
+```
+library(PerformanceAnalytics)
+library(astsa)
+library(itsmr)
+library(lubridate)
+library(zoo)
+library(randtests)
+library(forecast)
+library(urca)
+library(aTSA)
+library(ggplot2)
+library(tsoutliers)
+library(gridExtra)
+library(rugarch)
+library(tseries)
+library(quantmod)
+```
+
+* Data Loading and ploting the time series data:
+```
+nifty_it <- read.csv('/home/mahendra/Downloads/sem_3/TSA/project/data/it_data.csv')
+nifty_it <- nifty_it[852:1233,c(3,7)]
+dim(nifty_it)          #### (382 x 2)
+nifty_it[,1] <- dmy(nifty_it[,1])
+#plot(nifty_it$Close, ylab="Stock Prices",main="Figure : Closing prices of the stocks",type = 'l')
+tso_it <- zoo(nifty_it$Close, nifty_it$Date)
+#plot(tso_it)
+it <- data.frame(xts(nifty_it$Close, order.by=as.POSIXct(nifty_it$Date)))
+names(it) <- "it closed"
+chartSeries(it, type = "line", show.grid = TRUE,name = "CLOSING Price of NIFTY-IT")
+```
+
+[image here]<img src="./Images/plot_it.png" align="middle" >
+Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
+which the stock prices are recorded are in rupees. The time stamp on the data is from 23rd
+March, 2020 to 4th october 2021. 
+
 
 
 
@@ -125,7 +161,6 @@ Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based o
 
 
 ******************************************************************************************************************************************************** 
-
 <!-- 
 
 # Content:
@@ -351,5 +386,5 @@ and the ARCH(1) model is nothing else than the GARCH(0,1) model.
 
 The particularity of the standard GARCH model is that we consider that the conditional error term follows a normal distribution. This is not always the case for all types of data. We usually observe in the financial data more skewed data.  Therefore, we should also consider checking if the residuals follow that pattern. The GARCH model with skewed student t-distribution (STTD) is usually considered as an alternative to the normal distribution in order to check if we have a better model fitting. 
 
-
  -->
+
