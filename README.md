@@ -1,15 +1,5 @@
 
-### `About The Datasets:`
-We shall take 4 stock data named NIFTY-bank, NIFTY-oil, NIFTY-metal and NIFTY-it. The data is collected from [here](https://www1.nseindia.com/products/content/equities/indices/historical_index_data.htm). Each of them contains 7 different column as shown:
-[image here]<img src="./Images/it_data.png" align="middle">
-
-
-
-# `[g] Which model and why?`
-GARCH model but why?
-
-
-2. Data Description
+# `[h] Data visualization [EDA]:`
 Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
 which the stock prices are recorded are in rupees. The time stamp on the data is from 3 rd
 January, 2005 to 28 th December, 2020. The data is collected from the url:
@@ -19,9 +9,22 @@ So the financial data which I have worked on the Nifty50 daily stock index (i.e.
 prices) of SBI, HDFC Bank and AXIS Bank. So here we have 3 time series. Now we take one
 stock at a time and try to analyze and then fit an appropriate model to forecast.
 
-3. Objective
-This report is mainly focused on building up a good model for each stocks i.e. for SBI, HDFC
-and AXIS Bank so that we can use these fitted model to forecast.
+
+
+# `[i] Log returns:`
+
+
+
+
+
+
+# `[j] Analysis on Log-Returns:`
+
+
+
+
+
+
 
 
 
@@ -117,6 +120,7 @@ Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based o
 - https://www.tableau.com/learn/articles/time-series-analysis
 - https://quantivity.wordpress.com/2011/02/21/why-log-returns/
 - https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
+- http://eclr.humanities.manchester.ac.uk/index.php/R_GARCH
 
 
 
@@ -302,5 +306,50 @@ We know that we can decompose the equation to:
 Thus, the algorithmic complexity is reduced from `O(n)` multiplications to just an `O(1)` addition.
 This is extremely helpful for large (n)s.
 Furthermore, probability theory tells us that the sum of normally distributed variables is a normally distributed variable itself.
+
+
+### `About The Datasets:`
+We shall take 4 stock data named NIFTY-bank, NIFTY-oil, NIFTY-metal and NIFTY-it. The data is collected from [here](https://www1.nseindia.com/products/content/equities/indices/historical_index_data.htm). Each of them contains 7 different column as shown:
+[image here]<img src="./Images/data_it.png" align="middle">
+
+we will take data from 23rd march 2020 to 4th october 2021. Because there due to codiv-19 there was a sudden fall in all stock. So modeling before that is less significant. We will take only closiing price for modeling. 
+
+
+# `[g] Which model and why?`
+One of the assumptions of the ARMA model is that the error term are either strongly or weakly stationary. But the problem is that in real life this assumption is not always satisfied. Indeed, when looking financial data such as stock market data (AAPL, TESLA, GOOGL) or currency data (EUR/USD, GBP/USD), even indices data ( S&P 500, DAX 30, US30, NASDAQ 100 etc.) and cryptocurrency. Usually these data display an error term which presents a sort of stochastic variation of their volatility over time, meaning that considering the stationarity assumption will lead to a misspecification of the model estimation and therefore will lead to a bad forecast. GARCH models are usually the one considering such heteroskedasticity of the error terms and the stochastic change of their related volatility.
+GARCH stands for Generalized Autoregressive Conditional Heteroskedasticity Models. GARCH models are commonly used to estimate the volatility of returns for stocks, currencies, indices cryptocurrencies.
+
+There exist a large variety of GARCH model : Standard GARCH (SGARCH), Nonlinear GARCH (NGARCH), Nonlinear Asymetric GARCH (NAGARCH), Integrated GARCH (IGARCH), Exponential GARCH (EGARCH), GARCH in Mean (GARCH-M), Quadratic GARCH (QGARCH), Glosten-Jagannathan-Runke GARCH (GJR-GARCH), Treshold GARCH (TGARCH), Family GARCH (FGARCH), Continuous-time GARCH (COGARCH), Zero drift GARCH (ZDGARCH) etc. I will present only two of these variants : the standard GARCH and the GJR-GARCH models.
+
+**The standard GARCH Model**
+
+To model the GARCH model, we need to know first how the ARCH model is set. So let us consider the error term e[t] or the residual from the demeaned return. Then the error term is decomposed into two main terms that are the stochastic term z[t] and the time-dependent standard deviation s[t] such that :
+R[t] = mu + e[t]
+e[t] = s[t]*z[t]. 
+Where R[t] is the variable representing the time series of the return of the stock considered, mu is the mean and e[t] is the error term. The variable z[t] is assumed to be a strong white noise process. If we consider that q is the number of lags for the volatility modelling (ARCH(q)), then, we have
+
+![](https://latex.codecogs.com/svg.latex?\Large&space;s_{t}^{2}=\alpha_{0}+\alpha_{1}e_{t-1}^{2}+...+\alpha_{q}e_{t-q}^{2})
+where alpha_0 >0 and alpha_i >= 0 for i>0
+
+Therefore, an ARCH(q) model means that the time-dependent volatility depends on the first q lag squared values of the error term.
+
+
+Then, based on the ARCH(q) model, we can define the model setting of the GARCH. Indeed, the GARCH model is considered when the error variance s[t] is assumed to follow an ARMA process. In that situation, the GARCH(p,q) model with p the number of lags of the s[t] terms and q the number of lags for the ARCH terms e[t]^2. 
+
+
+Therefore, the main difference between the GARCH model and the ARCH model is that the GARCH model consider also the volatility of the previous period, while the ARCH model do not. This is truly important as in the financial market we can usually observe mean reverting patterns of the instruments/variables and this mean-reverting pattern can in some case could happen by respecting a certain average range, meaning that the volatility of the previous periods should be considered.
+
+![](https://latex.codecogs.com/svg.latex?&space;R_t=x_t^`b+e_t)
+
+![](https://latex.codecogs.com/svg.latex?&space;e_t/b=N(0,s_t))
+
+![](https://latex.codecogs.com/svg.latex?&space;s_{t}^{2}=\omega+\alpha_{1}e_{t-1}^{2}+...+\alpha_{q}e_{t-q}^{2}+\beta_{1}s_{t-1}^{2}+...+\beta_{p}s_{t-p}^{2})
+
+Then, a GARCH(1,1) is such that 
+![](https://latex.codecogs.com/svg.latex?&space;s_{t}^{2}=\omega+\alpha_{1}e_{t-1}^{2}+\beta_{1}s_{t-1}^{2})
+and the ARCH(1) model is nothing else than the GARCH(0,1) model.
+
+The particularity of the standard GARCH model is that we consider that the conditional error term follows a normal distribution. This is not always the case for all types of data. We usually observe in the financial data more skewed data.  Therefore, we should also consider checking if the residuals follow that pattern. The GARCH model with skewed student t-distribution (STTD) is usually considered as an alternative to the normal distribution in order to check if we have a better model fitting. 
+
 
  -->
