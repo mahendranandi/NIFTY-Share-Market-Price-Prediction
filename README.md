@@ -39,7 +39,8 @@ names(it) <- "it closed"
 chartSeries(it, type = "line", show.grid = TRUE,name = "CLOSING Price of NIFTY-IT")
 ```
 
-[image here]<img src="./Images/plot_it.png" align="middle" >
+<img src="./Images/plot_it" align="middle" >
+
 Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
 which the stock prices are recorded are in rupees. The time stamp on the data is from 23rd
 March, 2020 to 4th october 2021. 
