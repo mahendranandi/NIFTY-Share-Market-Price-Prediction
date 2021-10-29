@@ -1,75 +1,9 @@
-# NIFTY-Share-Market-Price-Prediction
-Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
+
+### `About The Datasets:`
+We shall take 4 stock data named NIFTY-bank, NIFTY-oil, NIFTY-metal and NIFTY-it. The data is collected from [here](https://www1.nseindia.com/products/content/equities/indices/historical_index_data.htm). Each of them contains 7 different column as shown:
+******Image/**********
 
 
-
-
-# `[f] About Finance Data and Datasets`
-A financial information is a formal record of the financial activities of a business, person, or other entity. Relevant financial information is presented in a structured manner and in a form easy to understand. Financial data consists of pieces or sets of information related to the financial health of a business. The pieces of data are used by internal management to analyze business performance and determine whether tactics and strategies must be altered. People and organizations outside a business will also use financial data reported by the business to judge its credit worthiness, decide whether to invest in the business, and determine whether the business is complying with government regulations.  
-NFI(non financial information) is associated with information that is not expressed in financial terms. NFI is a system of information that does not necessarily derive from the accounting system. NFI is not related to financial and economic data. 
-
-### When is Log Transformation Necessary for Financial Returns?
-There are a lot of benefits in using the log return or compounded return over the simple one. Some of these are lognormality, raw log equality, and low algorithmic complexity. Finally, use log return when temporal behavior of return is the focus of interest.
-Returns for stock prices are normally distributed but prices are not. They are lognormally distributed (assumed at least and require verification per case).
- let us discuss when should you use simple returns over compounded returns
-
-Using non-stationary time series data in financial models produces unreliable and spurious results and leads to poor understanding and forecasting. The solution to the problem is to transform the time series data so that it becomes stationary. If the non-stationary process is a random walk with or without a drift, it is transformed to stationary process by differencing. On the other hand, if the time series data analyzed exhibits a deterministic trend, the spurious results can be avoided by detrending.
-
-####################
-
-LINEAR RETURN VS. COMPOUND RETURNS
-The linear return is defined as
-
-![\Large f(x,y)=$\frac{sin(10(x^2+y^2))}{10}](https://latex.codecogs.com/svg.latex?\Large&space;f(x,y)=\frac{sin(10(x^2+y^2))}{10}) 
-
-The formula for Linear Returns
-Linear Return has the remarkable property of being asset-additive. This means that you can aggregate the returns more easily.
-In equation form, if we denote
-
-as the corresponding weights of n securities, the portfolio returns are simply:
-
-Portfolio Return using Linear Returns
-Linear returns are therefore being used by risk and portfolio managers for risk analysis, performance attribution, and portfolio optimization.
-Compound Returns, however, are calculated using the following formula:
-
-Formula for Compounded Returns
-Compounded returns are time-additive. This means that you can add them across time to get the total return over a specified period.
-There are several benefits to using log returns, theoretically and practically. We discuss at least three of them next.
-LOGNORMALITY
-A common assumption for most assets or stocks is that their prices are log-normally distributed. One reason for this is that prices cannot assume a negative value and as the stock price goes closer to 0, the movement becomes smaller.
-Note, however, that when resources or literature mentions that prices are log-normally distributed, some of these meant this formulation:
-
-Formulation of lognormal distribution of prices. The reason for this is that prices change over time and so is the variance of the price. So instead of using the marginal distribution, we are using the conditional distribution.
-What does this mean? If the log of price is normally distributed, then:
-
-A happy benefit of this is that there are a lot of tried-and-tested tools, theories, and methods that can be applied when a variable is normally distributed depending on your objective.
-RAW-LOG RETURN EQUALITY
-When (ri) is small, then:
-
-The approximation is considered good and is relevant for small trades. Try this out using your programming language to check it out.
-You may wonder why go for an approximation if you can calculate the raw returns? For programmers and data scientists, this calculation may be easier to code. But there is another strong reason for using log returns and we discuss it next.
-ALGORITHMIC COMPLEXITY
-Assume for example that a stock is traded, n-times, on a weekly (or daily) basis. To get the compound return:
-
-Clearly, this formula is complicated to translate to code. In addition, we know that the product of two normal variables is not normally distributed.
-The log of return, however, resolves these difficulties naturally.
-Using the formula for the log of returns:
-
-So, to calculate an n-week (or daily) return, we can apply the formula:
-
-We know that we can decompose the equation to:
-
-Thus, the algorithmic complexity is reduced from O(n) multiplications to just an O(1) addition.
-This is extremely helpful for large (n)s.
-Furthermore, probability theory tells us that the sum of normally distributed variables is a normally distributed variable itself.
-
-
-#######################
-
-Sometimes the non-stationary series may combine a stochastic and deterministic trend at the same time and to avoid obtaining misleading results both differencing and detrending should be applied, as differencing will remove the trend in the variance and detrending will remove the deterministic trend.
-### Why Log Returns: 
-https://quantivity.wordpress.com/2011/02/21/why-log-returns/
-https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
 
 # `[g] Which model and why?`
 GARCH model but why?
@@ -181,12 +115,14 @@ Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based o
 # References
 - https://www.idrisstsafack.com/post/garch-models-with-r-programming-a-practical-example-with-tesla-stock
 - https://www.tableau.com/learn/articles/time-series-analysis
+- https://quantivity.wordpress.com/2011/02/21/why-log-returns/
+- https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
 
 
 
 ******************************************************************************************************************************************************** 
 
-
+<!-- 
 
 # Content:
 - `[a] Introduction `
@@ -294,3 +230,77 @@ The following steps are to be followed:
 5. if residuals are stationary but there is still volatility is present check if ARCH effect is present or not
 6. if present then to model the variance use GARCH model
 7. choosing best ARMIA + GARCH model to model mean and variance at the same time.
+
+
+# NIFTY-Share-Market-Price-Prediction
+Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
+
+
+
+
+# `[f] About Finance Data and Datasets`
+A financial information is a formal record of the financial activities of a business, person, or other entity. Relevant financial information is presented in a structured manner and in a form easy to understand. Financial data consists of pieces or sets of information related to the financial health of a business. The pieces of data are used by internal management to analyze business performance and determine whether tactics and strategies must be altered. People and organizations outside a business will also use financial data reported by the business to judge its credit worthiness, decide whether to invest in the business, and determine whether the business is complying with government regulations.  
+NFI(non financial information) is associated with information that is not expressed in financial terms. NFI is a system of information that does not necessarily derive from the accounting system. NFI is not related to financial and economic data. 
+
+### When is Log Transformation Necessary for Financial Returns?
+There are a lot of benefits in using the log return or compounded return over the simple one. Some of these are lognormality, raw log equality, and low algorithmic complexity. Finally, use log return when temporal behavior of return is the focus of interest.
+Returns for stock prices are normally distributed but prices are not. They are lognormally distributed (assumed at least and require verification per case).
+let us discuss when should you use simple returns over compounded returns
+
+Using non-stationary time series data in financial models produces unreliable and spurious results and leads to poor understanding and forecasting. The solution to the problem is to transform the time series data so that it becomes stationary. If the non-stationary process is a random walk with or without a drift, it is transformed to stationary process by differencing. On the other hand, if the time series data analyzed exhibits a deterministic trend, the spurious results can be avoided by detrending.
+Sometimes the non-stationary series may combine a stochastic and deterministic trend at the same time and to avoid obtaining misleading results both differencing and detrending should be applied, as differencing will remove the trend in the variance and detrending will remove the deterministic trend.
+### Why Log Returns: 
+- [ ] `LINEAR RETURN VS. COMPOUND RETURNS:`
+The linear return is defined as-
+
+<!-- ![\Large f(x,y)=$\frac{sin(10(x^2+y^2))}{10}](https://latex.codecogs.com/svg.latex?\Large&space;f(x,y)=\frac{sin(10(x^2+y^2))}{10})  -->
+
+![ L_t=$\frac{P_{t+1}}{P_t}-1](https://latex.codecogs.com/svg.latex?&space;L_t=\frac{P_{t+1}}{P_t}-1) 
+
+Linear Return has the property of being asset-additive that is, you can aggregate the returns more easily. In equation form, if we denote w_1,w_2,w_3,...,w_n as the corresponding weights of n securities, the portfolio returns are simply:
+![ L_t=$\frac{P_{t+1}}{P_t}-1](https://latex.codecogs.com/svg.latex?&space;L_{t,p}=w_1P_{t,1}+w_2P_{t,2}+...+w_nP_{t,n})
+Where L(t,p) = Portfolio Return using Linear Returns\
+Linear returns are therefore being used by risk and portfolio managers for risk analysis, performance attribution, and portfolio optimization.
+Compound Returns, however, are calculated using the following formula:
+
+<!-- ![ ](https://latex.codecogs.com/svg.latex?&space;C_t=ln(\frac{P_{t+1}}{P_t})= C_t+C_{t+1}+...+C_{t+k-1} ) -->
+
+![image](https://user-images.githubusercontent.com/76218559/139386164-4b16e198-ada0-4ab1-817c-2e5705c01ab7.png)
+
+
+Compounded returns are time-additive that is, you can add them across time to get the total return over a specified period. Others benifits are-\
+**LOGNORMALITY**
+A common assumption for most assets or stocks is that their prices are log-normally distributed. One reason for this is that prices cannot assume a negative value and as the stock price goes closer to 0, the movement becomes smaller.
+
+![image](https://user-images.githubusercontent.com/76218559/139386410-d17f537d-ec11-4fa1-85a5-86edafd0d78e.png)
+
+Formulation of lognormal distribution of prices. The reason for this is that prices change over time and so is the variance of the price. So instead of using the marginal distribution, we are using the conditional distribution.
+What does this mean? If the log of price is normally distributed, then:
+![image](https://user-images.githubusercontent.com/76218559/139386823-e316792b-9297-4f57-9fde-004c8e40cd75.png)
+
+A happy benefit of this is that there are a lot of tried-and-tested tools, theories, and methods that can be applied when a variable is normally distributed depending on your objective.\
+**RAW-LOG RETURN EQUALITY**
+When (ri) is small, then:
+![image](https://user-images.githubusercontent.com/76218559/139387389-c99b35d9-8f6b-4a58-9459-8851713bcfe8.png)
+
+The approximation is considered good and is relevant for small trades.\
+**ALGORITHMIC COMPLEXITY**
+Assume for example that a stock is traded, n-times, on a daily basis. To get the compound return:
+![image](https://user-images.githubusercontent.com/76218559/139387534-08959af5-d7a9-460f-8a11-f1da44110fae.png)
+
+*We know that the product of two normal variables is not normally distributed.
+The log of return, however, resolves these difficulties naturally.*
+Using the formula for the log of returns:
+![image](https://user-images.githubusercontent.com/76218559/139387579-deea9261-ff80-4c48-8648-17edefef4604.png)
+
+So, to calculate an n-week (or daily) return, we can apply the formula:
+![image](https://user-images.githubusercontent.com/76218559/139387631-f5771e9a-e9b4-4fdb-99d3-9bc52faa94be.png)
+
+We know that we can decompose the equation to:
+![image](https://user-images.githubusercontent.com/76218559/139387648-b049db8d-1aac-4b26-906e-b212ab00bc91.png)
+
+Thus, the algorithmic complexity is reduced from `O(n)` multiplications to just an `O(1)` addition.
+This is extremely helpful for large (n)s.
+Furthermore, probability theory tells us that the sum of normally distributed variables is a normally distributed variable itself.
+
+ -->
