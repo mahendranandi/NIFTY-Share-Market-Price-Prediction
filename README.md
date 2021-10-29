@@ -49,6 +49,15 @@ March, 2020 to 4th october 2021.
 
 
 # `[i] Log returns:`
+The next step is the calculation of the daily return of the price and display it. For the return calculation we use the function CalculateReturns(). Here is the related code.We use again the function charSeries() in order to display the time series of the returns. 
+<img src="./Images/return_it" align="middle" >
+
+
+Here is the graph of the returns.As we can see there the time series of  returns is almost zero mean(0.003) and the returns displays for some random day very high volatility, meaning that the standard stationarity won't work here.
+
+
+Now we can display the histogram of returns and try to see if the normal distribution could be used for the conditional error term.
+
 
 
 
@@ -58,6 +67,17 @@ March, 2020 to 4th october 2021.
 # `[j] Analysis on Log-Returns:`
 
 
+### `[j][a] Augmented Dicky Fuller test [Unit root test]:`
+As we aren’t sure about the stationarity of a model, a hypothesis test can help us,
+
+
+### `[j][b] ACF, PACF of Log-returns :`
+
+
+### `[j][c] Mean model [ARIMA] selection: `
+
+
+### `[j][D] Observation of the residuals after fitting ARIMA model:`
 
 
 
@@ -230,6 +250,13 @@ So, in a simple way,
 - [ ] `Stationarity:`
 A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time. A common assumption in many time series techniques is that the data are stationary.Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).\
 - [ ] Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data with one of the following techniques:
+```
+** non stationarity in mean:
+        * deterministic trend
+               * detranding
+        * stochastic trend
+               * differencing
+```
 * We can difference the data. That is, given the series Zt, we create the new series
 Yi=Zi−Zi−1.
 The differenced data will contain one less point than the original data. Although you can difference the data more than once, one difference is usually sufficient.
@@ -246,7 +273,7 @@ Models can show different types of stationarity:
 **Trend-stationary** models fluctuate around a deterministic trend (the series mean). These deterministic trends can be linear or quadratic, but the amplitude (height of one oscillation) of the fluctuations neither increases nor decreases across the series.
 **Difference-stationary** models are models that need one or more differencings to become stationary (see Transforming Models below).
 
-- [ ] It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If you aren’t sure about the stationarity of a model, a hypothesis test can help. You have several options for testing, including:
+- [ ] It can be difficult to tell if a model is stationary or not. Unlike some visible seasonality , you usually can’t tell by looking at a graph. If we aren’t sure about the stationarity of a model, a hypothesis test can help. we have several options for testing, including:
 * Unit root tests (e.g. Augmented Dickey-Fuller (ADF) test or Zivot-Andrews test),
 * A KPSS test (run as a complement to the unit root tests).
 * A run sequence plot,
