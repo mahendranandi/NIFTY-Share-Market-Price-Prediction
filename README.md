@@ -1,7 +1,7 @@
 
 ### `About The Datasets:`
 We shall take 4 stock data named NIFTY-bank, NIFTY-oil, NIFTY-metal and NIFTY-it. The data is collected from [here](https://www1.nseindia.com/products/content/equities/indices/historical_index_data.htm). Each of them contains 7 different column as shown:
-******Image/**********
+[image here]<img src="./Images/it_data.png" align="middle">
 
 
 
