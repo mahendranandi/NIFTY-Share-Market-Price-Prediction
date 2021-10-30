@@ -6,7 +6,6 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
 
 
-
 # Content:
 - `[a] Introduction `
 - `[b] What is Time Series Analysis`
@@ -141,8 +140,6 @@ Sometimes the non-stationary series may combine a stochastic and deterministic t
 - [ ] `LINEAR RETURN VS. COMPOUND RETURNS:`
 The linear return is defined as-
 
-<!-- ![\Large f(x,y)=$\frac{sin(10(x^2+y^2))}{10}](https://latex.codecogs.com/svg.latex?\Large&space;f(x,y)=\frac{sin(10(x^2+y^2))}{10})  -->
-
 ![ L_t=$\frac{P_{t+1}}{P_t}-1](https://latex.codecogs.com/svg.latex?&space;L_t=\frac{P_{t+1}}{P_t}-1) 
 
 Linear Return has the property of being asset-additive that is, you can aggregate the returns more easily. In equation form, if we denote w_1,w_2,w_3,...,w_n as the corresponding weights of n securities, the portfolio returns are simply:
@@ -151,7 +148,6 @@ Where L(t,p) = Portfolio Return using Linear Returns\
 Linear returns are therefore being used by risk and portfolio managers for risk analysis, performance attribution, and portfolio optimization.
 Compound Returns, however, are calculated using the following formula:
 
-<!-- ![ ](https://latex.codecogs.com/svg.latex?&space;C_t=ln(\frac{P_{t+1}}{P_t})= C_t+C_{t+1}+...+C_{t+k-1} ) -->
 
 ![image](https://user-images.githubusercontent.com/76218559/139386164-4b16e198-ada0-4ab1-817c-2e5705c01ab7.png)
 
@@ -376,8 +372,13 @@ The ACF and PACF plots should be considered together to define the process. For 
 Blue bars on an ACF plot above are the error bands, and anything within these bars is not statistically significant. It means that correlation values outside of this area are very likely a correlation and not a statistical fluke. The confidence interval is set to 95% by default.
 Notice that for a lag zero, ACF is always equal to one, which makes sense because the signal is always perfectly correlated with itself.
 
+ 
+ 
+ 
+ 
+ 
 ### `[j][c] Mean model [ARIMA] selection: `
-
+Now,
 
 
 ### `[j][D] Observation of the residuals after fitting ARIMA model:`
