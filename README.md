@@ -106,19 +106,44 @@ The alternate hypothesis differs slightly according to which equation you’re u
         So, for a simple autoregressive process[AR(1)] we need the Dickey Fuller Test and Since the test is done over the residual term rather than raw data, it is not possible to use standard t-distribution to provide critical values. Therefore, the test statistic has a specific distribution simply known as the Dickey–Fuller table. But for AR process wiith more lag has other coeeficients too ( here It is denoted by φ ) for those we can use a typical t-distribution but for the α we use DF distribution.
 Test Statistics are 
 
-![ ](https://latex.codecogs.com/svg.latex?&space;DF_{\alpha\bar{}}=\frac{\alpha\bar{}}{SE(\alpha\bar{})}) 
+![ ](https://latex.codecogs.com/svg.latex?&space;DF_{\alpha\hat{}}=\frac{\alpha\hat{}}{SE(\alpha\hat{})}) 
 
 and
 
-![ ](https://latex.codecogs.com/svg.latex?&space;t_{\phi\bar{}_i}=\frac{\phi\bar{}_i}{SE(\phi\bar{}_i)}) 
+![ ](https://latex.codecogs.com/svg.latex?&space;t_{\phi\hat{}_i}=\frac{\phi\hat{}_i}{SE(\phi\hat{}_i)}) 
 
 
 
 
 ### `[j][b] ACF, PACF of Log-returns :`
 
+Autocorrelation and partial autocorrelation plots are heavily used in time series analysis and forecasting. These are plots that graphically summarize the strength of a relationship with an observation in a time series with observations at prior time steps. The difference between autocorrelation and partial autocorrelation can be difficult and confusing for beginners to time series forecasting.
+
+
+Lets understand Correlation and Autocorrelation. Statistical correlation summarizes the strength of the relationship between two variables. We can assume the distribution of each variable fits a Gaussian (bell curve) distribution. If this is the case, we can use the Pearson’s correlation coefficient to summarize the correlation between the variables. The Pearson’s correlation coefficient is a number between -1 and 1 that describes a negative or positive correlation respectively. A value of zero indicates no correlation. We can calculate the correlation for time series observations with observations with previous time steps, called lags. Because the correlation of the time series observations is calculated with values of the same series at previous times, this is called a serial correlation, or an autocorrelation.
+A plot of the autocorrelation of a time series by lag is called the AutoCorrelation Function, or the acronym ACF. This plot is sometimes called a correlogram or an autocorrelation plot.
+
+It is a bar chart of coefficients of correlation between a time series and it lagged values. Simply stated: ACF explains how the present value of a given time series is correlated with the past (1-unit past, 2-unit past, …, n-unit past) values. In the ACF plot, the x-axis expresses the correlation coefficient whereas the y-axis mentions the number of lags. Assume that, y(t-1), y(t), y(t-1),….y(t-n) are values of a time series at time t, t-1,…,t-n, then the lag-1 value is the correlation coefficient between y(t) and y(t-1), lag-2 is the correlation coefficient between y(t) and y(t-2) and so on.
+
+
+
+A partial autocorrelation is a summary of the relationship between an observation in a time series with observations at prior time steps with the relationships of intervening observations removed. The partial autocorrelation at lag k is the correlation that results after removing the effect of any correlations due to the terms at shorter lags. The autocorrelation for an observation and an observation at a prior time step is comprised of both the direct correlation and indirect correlations. These indirect correlations are a linear function of the correlation of the observation, with observations at intervening time steps. So, PACF  explains the partial correlation between the series and lags of itself. In simple terms, PACF can be explained using a linear regression where we predict y(t) from y(t-1), y(t-2), and y(t-3) [2]. In PACF, we correlate the “parts” of y(t) and y(t-3) that are not predicted by y(t-1) and y(t-2).
+
+
+we can plot the ACF and PACF plots to identify the orders of AR and MA terms in the ARMA model. At times, only AR terms or only MA terms are sufficient to model the process. Table 1 explains how to select AR and MA terms based on ACF and PACF [1]:
+
+![image](https://user-images.githubusercontent.com/76218559/139539755-c1f1e39a-3ebf-47e1-8012-c6f8b795b6ab.png)
+
+The ACF and PACF plots should be considered together to define the process. For the AR process, we expect that the ACF plot will gradually decrease and simultaneously the PACF should have a sharp drop after p significant lags. To define a MA process, we expect the opposite from the ACF and PACF plots, meaning that: the ACF should show a sharp drop after a certain q number of lags while PACF should show a geometric or gradual decreasing trend. On the other hand, if both ACF and PACF plots demonstrate a gradual decreasing pattern, then the ARMA process should be considered for modeling.
+
+
+Blue bars on an ACF plot above are the error bands, and anything within these bars is not statistically significant. It means that correlation values outside of this area are very likely a correlation and not a statistical fluke. The confidence interval is set to 95% by default.
+Notice that for a lag zero, ACF is always equal to one, which makes sense because the signal is always perfectly correlated with itself.
+
+
 
 ### `[j][c] Mean model [ARIMA] selection: `
+
 
 
 ### `[j][D] Observation of the residuals after fitting ARIMA model:`
@@ -213,6 +238,25 @@ Compute and plot the autocorrelation of the squared rediduals e[t]^2.
 
 Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based on one of the specified model.
 
+
+
+************************
+Akaike Information Criteria (AIC)
+AIC stands for Akaike Information Criteria, and it’s a statistical measure that we can use to compare different models for their relative quality. It measures the quality of the model in terms of its goodness-of-fit to the data, its simplicity, and how much it relies on the tuning parameters. The formula for AIC is
+
+ AIC = 2k - 2l
+
+where l is a log-likelihood, and k is a number of parameters. For example, the AR(p) model has p+1 parameters. From the formula above, we can conclude that AIC prefers a higher log-likelihood that indicates how strong the model is in fitting the data and a simpler model in terms of parameters.
+
+
+Bayesian Information Criteria (BIC)
+In addition to AIC, the BIC (Bayesian Information Criteria) uses one more indicator n that defines the number of samples used for fitting. The formula for BIC is
+
+ BIC = klog n - 2l
+
+
+
+****************************
 
 
 
