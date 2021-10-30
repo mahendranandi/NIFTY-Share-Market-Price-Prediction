@@ -1,4 +1,5 @@
 
+
 # `[h] Data visualization [EDA]:`
 Finance is a field where time series arises naturally from the evolution of indexes and prices.
 So the financial data which I have worked on the Nifty daily stock index (i.e. closing
@@ -41,9 +42,7 @@ chartSeries(it, type = "line", show.grid = TRUE,name = "CLOSING Price of NIFTY-I
 
 <img src="./Images/plot_it" align="middle" >
 
-Data taken are on daily basis. Closed prices are only taken for analysis and the currency in
-which the stock prices are recorded are in rupees. The time stamp on the data is from 23rd
-March, 2020 to 4th october 2021. 
+Data taken are on daily basis. Closed prices are only taken for analysis and the currency in which the stock prices are recorded are in rupees. The time stamp on the data is from 23rd March, 2020 to 4th october 2021. 
 
 
 
@@ -68,7 +67,52 @@ Now we can display the histogram of returns and try to see if the normal distrib
 
 
 ### `[j][a] Augmented Dicky Fuller test [Unit root test]:`
-As we aren’t sure about the stationarity of a model, a hypothesis test can help us,
+
+[ I will request you to kindly go through the explanation already given in wikipidea about [Dickey-Fuller-Test](https://en.wikipedia.org/wiki/Dickey%E2%80%93Fuller_test) and [Augmented-Dickey-Fuller-Test](https://en.wikipedia.org/wiki/Augmented_Dickey%E2%80%93Fuller_test)
+and then go through the below part. Here are some ambiguous with the notation but you can get it easily. ]
+As we aren’t sure about the stationarity of a model, a hypothesis test can help us,It is from the test statistic and the p-value, you can make an inference as to whether a given series is stationary or not.
+* Unit root test: 
+The ADF test belongs to a category of tests called ‘Unit Root Test’, which is the proper method for testing the stationarity of a time series. Unit root is a characteristic of a time series that makes it non-stationary. Technically speaking, a unit root is said to exist in a time series of the value of alpha = 1 in the below equation.
+
+![image](https://user-images.githubusercontent.com/76218559/139535872-56165923-3229-45d6-9122-c85dd83728a4.png)
+
+where, Yt is the value of the time series at time ‘t’ and Xe is an exogenous variable (a separate explanatory variable, which is also a time series). The presence of a unit root means the time series is non-stationary. Besides, the number of unit roots contained in the series corresponds to the number of differencing operations required to make the series stationary.
+
+* Dicky Fuller test:
+Before going into ADF test, let’s first understand what is the Dickey-Fuller test. A Dickey-Fuller test is a unit root test that tests the mull hypothesis that α=1 in the following model equation. alpha is the coefficient of the first lag on Y. Null Hypothesis (H0): alpha=1
+
+![image](https://user-images.githubusercontent.com/76218559/139535962-7c528c3c-db61-4c32-8723-dd65a6a69050.png)
+
+where,
+y(t-1) = lag 1 of time series
+delta Y(t-1) = first difference of the series at time (t-1)
+Fundamentally, it has a similar null hypothesis as the unit root test. That is, the coefficient of Y(t-1) is 1, implying the presence of a unit root. If not rejected, the series is taken to be non-stationary.
+
+* Augmented Dickey Fuller (ADF): 
+The Augmented Dickey-Fuller test evolved based on the above equation and is one of the most common form of Unit Root test. As the name suggest, the ADF test is an ‘augmented’ version of the Dickey Fuller test.
+Before we run an ADF test, inspect our data to figure out an appropriate regression model. For example, a nonzero mean indicates the regression will have a constant term. The three basic regression models are:
+
+No constant, no trend: Δyt = γyt-1 + et\
+Constant, no trend: Δyt = c + γyt-1 + et\
+Constant and trend: Δyt = c + γyt-1 + βt + et
+
+The ADF test expands the Dickey-Fuller test equation to include high order regressive process in the model,i.e, adds lagged differences to these models. We need to choose a lag length to run the test. The lag length should be chosen so that the residuals aren’t serially correlated. We’ve got several options for choosing lags: Minimize Akaike’s information criterion (AIC) or Bayesian information criterion (BIC), or drop lags until the last lag is statistically significant.
+
+![image](https://user-images.githubusercontent.com/76218559/139536019-15cd2bf1-0031-4011-819e-d110790ace9f.png)
+
+The hypotheses for the test:
+The null hypothesis for this test is that there is a unit root.
+The alternate hypothesis differs slightly according to which equation you’re using. The basic alternate is that the time series is stationary (or trend-stationary). The augmented Dickey–Fuller (ADF) statistic, used in the test, is a negative number. The more negative it is, the stronger the rejection of the hypothesis that there is a unit root at some level of confidence
+        So, for a simple autoregressive process[AR(1)] we need the Dickey Fuller Test and Since the test is done over the residual term rather than raw data, it is not possible to use standard t-distribution to provide critical values. Therefore, the test statistic has a specific distribution simply known as the Dickey–Fuller table. But for AR process wiith more lag has other coeeficients too ( here It is denoted by φ ) for those we can use a typical t-distribution but for the α we use DF distribution.
+Test Statistics are 
+
+![ ](https://latex.codecogs.com/svg.latex?&space;DF_{\alpha\bar{}}=\frac{\alpha\bar{}}{SE(\alpha\bar{})}) 
+
+and
+
+![ ](https://latex.codecogs.com/svg.latex?&space;t_{\phi\bar{}_i}=\frac{\phi\bar{}_i}{SE(\phi\bar{}_i)}) 
+
+
 
 
 ### `[j][b] ACF, PACF of Log-returns :`
@@ -178,6 +222,9 @@ Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based o
 - https://quantivity.wordpress.com/2011/02/21/why-log-returns/
 - https://medium.datadriveninvestor.com/when-is-log-transformation-necessary-for-financial-returns-4b3f5bb58e62
 - http://eclr.humanities.manchester.ac.uk/index.php/R_GARCH
+- https://github.com/ritvikmath/Time-Series-Analysis
+- https://ourcodingclub.github.io/tutorials/time/
+- https://www.machinelearningplus.com/time-series/augmented-dickey-fuller-test/
 
 
 
