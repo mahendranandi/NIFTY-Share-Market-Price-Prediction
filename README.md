@@ -287,16 +287,7 @@ The next step is the calculation of the daily return of the price and display it
 Here is the graph of the returns.As we can see there the time series of  returns is almost zero mean(0.003) and the returns displays for some random day very high volatility, meaning that the standard stationarity won't work here.
 
 
-Now we can display the histogram of returns and try to see if the normal distribution could be used for the conditional error term.
-
-
-
-
-
-
-
 # `[j] Analysis on Log-Returns:`
-
 
 ### `[j][a] Augmented Dicky Fuller test [Unit root test]:`
 
@@ -343,14 +334,51 @@ Test Statistics are
 and
 
 ![ ](https://latex.codecogs.com/svg.latex?&space;t_{\phi\hat{}_i}=\frac{\phi\hat{}_i}{SE(\phi\hat{}_i)}) 
+******************************
+In this repo you can find one jupyter notebook where I have also colleceted and practiced some codes. In section-10 there a hands on verification of this test is done. check that.
+R code for ADF test:
+```
 
+summary(ur.df(na.omit(Return_it)))
+```
+Output:
+```
+############################################### 
+# Augmented Dickey-Fuller Test Unit Root Test # 
+############################################### 
+Test regression none 
+Call:
+lm(formula = z.diff ~ z.lag.1 - 1 + z.diff.lag)
 
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.059141 -0.004664  0.002614  0.010644  0.069094 
+
+Coefficients:
+           Estimate Std. Error t value Pr(>|t|)    
+z.lag.1    -1.10876    0.07131  -15.55   <2e-16 ***
+z.diff.lag  0.09206    0.05004    1.84   0.0666 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.01514 on 377 degrees of freedom
+Multiple R-squared:  0.5153,	Adjusted R-squared:  0.5127 
+F-statistic: 200.4 on 2 and 377 DF,  p-value: < 2.2e-16
+
+Value of test-statistic is: -15.5482 
+
+Critical values for test statistics: 
+      1pct  5pct 10pct
+tau1 -2.58 -1.95 -1.62
+
+```
+The value of the test statistic is in rejection regeion, i.e, there is signifant evedence to reject the null hypothesis that the time series has unit root.
+So, from this result we can't say that the data is stationary. For this we have to further analysis the ACF and PACF plot and sqr_returns etc.
 
 
 ### `[j][b] ACF, PACF of Log-returns :`
 
-Autocorrelation and partial autocorrelation plots are heavily used in time series analysis and forecasting. These are plots that graphically summarize the strength of a relationship with an observation in a time series with observations at prior time steps. The difference between autocorrelation and partial autocorrelation can be difficult and confusing for beginners to time series forecasting.
-
+Autocorrelation and partial autocorrelation plots are heavily used in time series analysis and forecasting. These are plots that graphically summarize the strength of a relationship with an observation in a time series with observations at prior time steps.
 
 Lets understand Correlation and Autocorrelation. Statistical correlation summarizes the strength of the relationship between two variables. We can assume the distribution of each variable fits a Gaussian (bell curve) distribution. If this is the case, we can use the Pearson’s correlation coefficient to summarize the correlation between the variables. The Pearson’s correlation coefficient is a number between -1 and 1 that describes a negative or positive correlation respectively. A value of zero indicates no correlation. We can calculate the correlation for time series observations with observations with previous time steps, called lags. Because the correlation of the time series observations is calculated with values of the same series at previous times, this is called a serial correlation, or an autocorrelation.
 A plot of the autocorrelation of a time series by lag is called the AutoCorrelation Function, or the acronym ACF. This plot is sometimes called a correlogram or an autocorrelation plot.
@@ -372,16 +400,152 @@ The ACF and PACF plots should be considered together to define the process. For 
 Blue bars on an ACF plot above are the error bands, and anything within these bars is not statistically significant. It means that correlation values outside of this area are very likely a correlation and not a statistical fluke. The confidence interval is set to 95% by default.
 Notice that for a lag zero, ACF is always equal to one, which makes sense because the signal is always perfectly correlated with itself.
 
+ * Here is the acf and pacf of the original stock data[ NIFTY-IT ] :
+<img src="./Images/ap_stock" align="middle" >
  
- 
- 
- 
+ * And here is the acf pacf plot of the log-return of Nifty-IT data :
+<img src="./Images/ap_return" align="middle" >
  
 ### `[j][c] Mean model [ARIMA] selection: `
-Now,
+Now, we have seen our original data, we have also seen the Log-return has no unit root. We checked if the return has any auto-corelation, and there are somevery small corelation between data point of various lag. So, now we want to fit ARIMA model to model the mean. And after that checking residuals and sqr-returns we decide fpr GARCH model.
+To find the order of the ARIMA we generally follow the acf and pacf plot, but in this case it is not easy. So we will take help of a function in R named `auto.arima()` to find the best order of ARIMA that can alone fit the data. By running the code we found that the best order is ARIMA(4,0,0):\
+Code:
+```
+arima_it <- auto.arima(Return_it)
+arima_it
+checkresiduals(arima_it)
+```
+Output:
+```
+> arima_it
+Series: Return_it 
+ARIMA(4,0,0) with non-zero mean 
 
+Coefficients:
+         ar1      ar2     ar3      ar4   mean
+      0.0084  -0.0174  0.0840  -0.0959  3e-03
+s.e.  0.0679   0.0707  0.0635   0.0632  8e-04
+
+sigma^2 estimated as 0.0002304:  log likelihood=1056.11
+AIC=-2100.23   AICc=-2100.07   BIC=-2074.26
+```
+Also we test the goodness of thee fit
+```
+Box.test(na.omit(as.vector(Return_it)), lag = 1, type = "Ljung-Box", fitdf = 0)
+```
+output:
+```
+	Box-Ljung test
+
+data:  na.omit(as.vector(Return_it))
+X-squared = 0.42253, df = 1, p-value = 0.5157
+```
+ Null hypothesis is that our model does not shoh lack of fit.
+So, the model fit well.
 
 ### `[j][D] Observation of the residuals after fitting ARIMA model:`
+Code:
+```
+arima_it <- auto.arima(Return_it)
+checkresiduals(arima_it)
+```
+Output:
+```
+> checkresiduals(arima_it)
+
+	Ljung-Box test
+    
+data:  Residuals from ARIMA(4,0,0) with non-zero mean
+Q* = 72.178, df = 5, p-value = 3.608e-14
+
+Model df: 5.   Total lags used: 10
+
+```
+<img src="./Images/residual" align="middle" >
+
+Here after fitting the ARIMA(4,0,0), the residual looks like white noise and it fits well. But if we deeply follow the residual  we can found that there is a change in volatility.It will be clear from the square of the residual in the plots below
+
+```
+arima_res_it <- arima_it$residuals
+sq_residual_it <- arima_res_it^2
+ggtsdisplay(sq_residual_it,main="Squared Residuals after fitting ARIMA(4,0,0)")
+```
+<img src="./Images/sqr_residual" align="middle" >
+
+So for the purpose of analysing Volatility we will go back to the square of the log-returns.
+
+
+# `[k] Square Log-Returns to observe Volatility:`
+
+<img src="./Images/sqr_it" align="middle" >
+We can see the plot where the squared value of the log retyrn is shown datewise. From this we can follow that there is some peak from which we can get an idea of having ARCH effect,i.e, the heteroskedasticity of the data.  
+
+# [l] ACF and PACF of the sqr-Log-Returns:`
+Now we again follow the ACF and PACF plot to be more confirmed about having heteroskedasticity.
+
+<img src="./Images/ap_sqr_return" align="middle" >
+
+We have seen that there was no significant correlation in the acf anf pacf plot of the return but in case of squared log-return there exists some high corelation Which is actually signifying the existance of heteroskedasticity.
+
+
+# `[m] Check if Volatility [ARCH effect] is present:`
+
+### `[a] Volatility Clustering (Monthly rolling volatility) :`
+The next step is to calculate the annualized volatility and the rolling-window volatility of returns. This can be done either at the daily, monthly, quarterly frequency, etc. Here is the code for the monthly. width = 22 (252 for yearly frequency)
+
+```
+chart.RollingPerformance(na.omit(Return_it),width = 22,FUN = 'sd.annualized',scale=252, main = 'Rolling 1 month Volatility')
+
+```
+<img src="./Images/volatility" align="middle" >
+
+Based on this graph, we can still see that there are months with very high volatility and months with very low volatility, suggesting the stochastic model for conditional volatility.
+
+### `[b] ARCH test`
+```
+library(FinTS)
+ArchTest(Return_it,lags=1,demean = TRUE)
+```
+Output:
+```
+	ARCH LM-test; Null hypothesis: no ARCH effects
+
+data:  Return_it
+Chi-squared = 20.964, df = 1, p-value = 4.679e-06
+```
+
+
+# `[n] GARCH model selection:`
+
+Now we can run the GARCH model. We can start with the standard GARCH model where we consider the conditional error term is a normal distribution. We use the  function ugarchspec() for the model specification and ugarchfit() for the model fitting. For the standard GARCH model, we specify a constant to mean ARMA model, which means that arma0rder = c(4,0). We consider the GARCH(1,1) model and the distribution of the conditional error term is the normal distribution (will chack also for skewed student t distributuion).
+
+### `[a] Following the distribution of the log-returns`
+Now we can display the histogram of returns and try to see if the normal distribution could be used for the conditional error term.
+
+<img src="./Images/dist_it" align="middle" >
+
+As we can see, the histogram of the of the returns seems to be more skewed than the normal distribution, meaning that considering the normal distribution for the returns is not a good choice. The student distribution  tends to be the more adapted for this distribution. We will see if that is confirmed by the model estimation. 
+
+```
+
+```
+
+
+### `[b] Guess about the order of the model ( IF POSSIBLE ):`
+
+
+
+### `[c] AIC,AICc,BIC value:`
+
+
+### `[d] choosing the best model :`
+
+
+# `[o] Forcasting with the best model:`
+
+
+
+
 
 
 
@@ -504,6 +668,7 @@ In addition to AIC, the BIC (Bayesian Information Criteria) uses one more indica
 - https://github.com/ritvikmath/Time-Series-Analysis
 - https://ourcodingclub.github.io/tutorials/time/
 - https://www.machinelearningplus.com/time-series/augmented-dickey-fuller-test/
+- https://people.duke.edu/~rnau/411arim3.htm
 
 
 
