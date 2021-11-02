@@ -3,7 +3,7 @@
 Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
 
-<img src="./Images/cover.jpeg" >
+<img src="./Images/cover.jpeg" align=right  >
 
 
 
@@ -11,7 +11,7 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 - `[a] Introduction `
 - `[b] What is Time Series Analysis`
 - `[c] Difference from Regression analysis`
-- `[d] Stationarity, White Noise, IID`
+- `[d] Stationarity,Random Walk, White Noise, IID`
 - `[e] Steps to follow serially`
 - `[f] About Finance Data and Datasets`
 - `[g] Which model and why?`
@@ -72,15 +72,17 @@ So, in a simple way,
 
 # `[d] Stationarity, White Noise, IID`
 
-- [ ] `Stationarity:`
+- [x] `Stationarity:`
 A time series has stationarity if a shift in time doesn't cause a change in the shape of the distribution. Basic properties of the distribution like the mean , variance and covariance are constant over time. In the most intuitive sense, stationarity means that the statistical properties of a process generating a time series do not change over time . It does not mean that the series does not change over time, just that the way it changes does not itself change over time. A common assumption in many time series techniques is that the data are stationary.Stationarity can be defined in precise mathematical terms, but for our purpose we mean a flat looking series, without trend, constant variance over time, a constant autocorrelation structure over time and no periodic fluctuations (seasonality).\
 - [ ] Data points are often non-stationary or have means, variances, and covariances that change over time. Non-stationary behaviors can be trends, cycles, random walks, or combinations of the three.Non-stationary data, as a rule, are unpredictable and cannot be modeled or forecasted. In order to receive consistent, reliable results, the non-stationary data needs to be transformed into stationary data with one of the following techniques:
 ```
 ** non stationarity in mean:
-        * deterministic trend
+        * deterministic trend-
                * detranding
-        * stochastic trend
+        * stochastic trend-
                * differencing
+** non stationarity in variance:
+** non stationaritiy due to both mean and variance
 ```
 * We can difference the data. That is, given the series Zt, we create the new series
 Yi=Zi−Zi−1.
@@ -105,7 +107,33 @@ Models can show different types of stationarity:
 * The Priestley-Subba Rao (PSR) Test or Wavelet-Based Test, which are less common tests based on spectrum analysis.\
 Though we will use only the Unit root test here. (To know more about it)[https://www.investopedia.com/articles/trading/07/stationary.asp]
 
-- [ ] `White Noise and IID:`
+- [x] `Random Walk:`
+ 
+<img src="./Images/random_walk.jpeg" >
+
+consider a AR(1) model. 
+![](https://latex.codecogs.com/svg.latex?&space;Y_t=c+\alpha*Y_{t-1}+e_t)
+
+As long as |α| < 1 , it is stationary and everything is fine. Now let's consider the extreme case where  |α| = 1 ,i.e, 
+
+![](https://latex.codecogs.com/svg.latex?&space;Y_t=c+Y_{t-1}+e_t)
+
+![](https://latex.codecogs.com/svg.latex?&space;=c+(c+Y_{t-2}+e_{t-1})+e_t)
+
+![](https://latex.codecogs.com/svg.latex?&space;=t*c+Y_0+\sum_i^ta_i)
+
+This is what we call random walk with drift. If, c=0 it is a `random walk`.
+- [ ] Examples of Random Walk process:
+
+ - Behaviour of stock market
+ - Brownian motion
+ - Movement of a drunken man
+ - It is a limiting process of AR(1)
+
+
+
+
+- [x] `White Noise and IID:`
 A white noise process is only defined by the first 2 moments. A noise sequence (et) is a white noise sequence if\
 the expectation of each element is zero, E(et) = 0\
 the variance of each element is finite, Var(et) < infinity\
@@ -193,7 +221,8 @@ Furthermore, probability theory tells us that the sum of normally distributed va
 
 ### `About The Datasets:`
 We shall take 4 stock data named NIFTY-bank, NIFTY-oil, NIFTY-metal and NIFTY-it. The data is collected from [here](https://www1.nseindia.com/products/content/equities/indices/historical_index_data.htm). Each of them contains 7 different column as shown:
-[image here]<img src="./Images/data_it.png" align="middle">
+
+<img src="./Images/data_it.png" align="middle">
 
 we will take data from 23rd march 2020 to 4th october 2021. Because there due to codiv-19 there was a sudden fall in all stock. So modeling before that is less significant. We will take only closiing price for modeling. 
 
@@ -233,6 +262,10 @@ Then, a GARCH(1,1) is such that
 and the ARCH(1) model is nothing else than the GARCH(0,1) model.
 
 The particularity of the standard GARCH model is that we consider that the conditional error term follows a normal distribution. This is not always the case for all types of data. We usually observe in the financial data more skewed data.  Therefore, we should also consider checking if the residuals follow that pattern. The GARCH model with skewed student t-distribution (STTD) is usually considered as an alternative to the normal distribution in order to check if we have a better model fitting. 
+
+<img src="./Images/garch_formula.png" align="middle">
+
+<img src="./Images/llf.jpg" align="middle">
 
 
 # `[h] Data visualization [EDA]:`
@@ -404,10 +437,10 @@ Blue bars on an ACF plot above are the error bands, and anything within these ba
 Notice that for a lag zero, ACF is always equal to one, which makes sense because the signal is always perfectly correlated with itself.
 
  * Here is the acf and pacf of the original stock data[ NIFTY-IT ] :
-<img src="./Images/ap_stock" align="middle" >
+<img src="./Images/ap_IT.png" align="middle" >
  
  * And here is the acf pacf plot of the log-return of Nifty-IT data :
-<img src="./Images/ap_return" align="middle" >
+<img src="./Images/ap_it.png" align="middle" >
  
 ### `[j][c] Mean model [ARIMA] selection: `
 Now, we have seen our original data, we have also seen the Log-return has no unit root. We checked if the return has any auto-corelation, and there are somevery small corelation between data point of various lag. So, now we want to fit ARIMA model to model the mean. And after that checking residuals and sqr-returns we decide fpr GARCH model.
@@ -464,7 +497,7 @@ Q* = 72.178, df = 5, p-value = 3.608e-14
 Model df: 5.   Total lags used: 10
 
 ```
-<img src="./Images/residual" align="middle" >
+<img src="./Images/res_it.png" align="middle" >
 
 Here after fitting the ARIMA(4,0,0), the residual looks like white noise and it fits well. But if we deeply follow the residual  we can found that there is a change in volatility.It will be clear from the square of the residual in the plots below
 
@@ -473,7 +506,7 @@ arima_res_it <- arima_it$residuals
 sq_residual_it <- arima_res_it^2
 ggtsdisplay(sq_residual_it,main="Squared Residuals after fitting ARIMA(4,0,0)")
 ```
-<img src="./Images/sqr_residual" align="middle" >
+<img src="./Images/sqr_res_it.png" align="middle" >
 
 So for the purpose of analysing Volatility we will go back to the square of the log-returns.
 
@@ -483,10 +516,10 @@ So for the purpose of analysing Volatility we will go back to the square of the 
 <img src="./Images/sqr_it" align="middle" >
 We can see the plot where the squared value of the log retyrn is shown datewise. From this we can follow that there is some peak from which we can get an idea of having ARCH effect,i.e, the heteroskedasticity of the data.  
 
-# [l] ACF and PACF of the sqr-Log-Returns:`
+# `[l] ACF and PACF of the sqr-Log-Returns:`
 Now we again follow the ACF and PACF plot to be more confirmed about having heteroskedasticity.
 
-<img src="./Images/ap_sqr_return" align="middle" >
+<img src="./Images/ap_sqr.png" align="middle" >
 
 We have seen that there was no significant correlation in the acf anf pacf plot of the return but in case of squared log-return there exists some high corelation Which is actually signifying the existance of heteroskedasticity.
 
@@ -500,7 +533,7 @@ The next step is to calculate the annualized volatility and the rolling-window v
 chart.RollingPerformance(na.omit(Return_it),width = 22,FUN = 'sd.annualized',scale=252, main = 'Rolling 1 month Volatility')
 
 ```
-<img src="./Images/volatility" align="middle" >
+<img src="./Images/volatility.png" align="middle" >
 
 Based on this graph, we can still see that there are months with very high volatility and months with very low volatility, suggesting the stochastic model for conditional volatility.
 
@@ -535,99 +568,191 @@ As we can see, the histogram of the of the returns seems to be more skewed than 
 
 
 ### `[b] Guess about the order of the model ( IF POSSIBLE ):`
-
-
+We here will do a sofisticated way of choosing the order of the ARMA + GARH model. We initially fit the best ARMA model alone. But we will se that when we incorporate the GARCH model the order will no more be best for the combination model.
 
 ### `[c] AIC,AICc,BIC value:`
 
+- [ ] **Akaike Information Criteria (AIC)**
+AIC stands for Akaike Information Criteria, and it’s a statistical measure that we can use to compare different models for their relative quality. It measures the quality of the model in terms of its goodness-of-fit to the data, its simplicity, and how much it relies on the tuning parameters. AIC is calculated from:
+ - the number of independent variables used to build the model.
+ - the maximum likelihood estimate of the model (how well the model reproduces the data).
+
+The formula for AIC is   
+
+![ ](https://latex.codecogs.com/svg.latex?\Large&space;AIC=2k-2l) 
+
+where l is a log-likelihood, and k is a number of parameters. For example, the AR(p) model has p+1 parameters. From the formula above, we can conclude that AIC prefers a higher log-likelihood that indicates how strong the model is in fitting the data and a simpler model in terms of parameters. The best-fit model according to AIC is the one that explains the greatest amount of variation using the fewest possible independent variables.
+
+
+- [ ] **Bayesian Information Criteria (BIC)**
+In addition to AIC, the BIC (Bayesian Information Criteria) uses one more indicator n that defines the number of samples used for fitting. 
+The formula for BIC is
+
+![ ](https://latex.codecogs.com/svg.latex?\Large&space;BIC=klogn-2l) 
+ 
+- [ ] **Modification for small sample size (AICc)**
+When the sample size is small, there is a substantial probability that AIC will select models that have too many parameters, i.e. that AIC will overfit. To address such potential overfitting, AICc was developed: *AICc is AIC with a correction for small sample sizes* .
+
+The formula for AICc depends upon the statistical model. Assuming that the model is univariate, is linear in its parameters, and has normally-distributed residuals (conditional upon regressors), 
+The formula for AICc is as follows
+
+![ ](https://latex.codecogs.com/svg.latex?\Large&space;AICc=(2k-2l)+\frac{2k^2+2k}{n-k-1}) 
+
+
+
 
 ### `[d] choosing the best model :`
+SO, to choose the best model we need to find the model having minimum information criterion. As you can see from the code below, we have taken all possible combination of the orders and collected all types of information criterion in a dataframe to compare.
+
+```
+NIFTY_IT_MODELS_p<-list()
+NIFTY_IT_MODELS_q<-list()
+NIFTY_IT_MODELS_P<-list()
+NIFTY_IT_MODELS_Q<-list()
+NIFTY_IT_MODELS_AIC<-list()
+NIFTY_IT_MODELS_BIC<-list()
+NIFTY_IT_MODELS_AICC<-list()
+
+ind=0
+for (p in seq(0,5)){
+  for (q in seq(0,5)){
+    for (P in seq(0,5)){
+      for (Q in seq(0,5)){
+        try({
+          spec <- ugarchspec(mean.model = list(armaOrder=c(p,q)),
+                             variance.model = list(model = 'eGARCH',
+                             garchOrder = c(P,Q)),distribution = 'std')
+          fit <- ugarchfit(spec = spec, data= na.omit(Return_it)) 
+          k=p+q+P+Q
+          n=382
+          
+          AICind<-infocriteria(fit)[1]
+          BICind<-infocriteria(fit)[2] 
+	  AICcind <- AICind + (2*k*(k+1)/(n-k-1))
+  	})
+	
+        ind=ind+1
+        NIFTY_IT_MODELS_p[[ind]]<-p
+        NIFTY_IT_MODELS_q[[ind]]<-q
+        NIFTY_IT_MODELS_P[[ind]]<-P
+        NIFTY_IT_MODELS_Q[[ind]]<-Q
+        try({
+          NIFTY_IT_MODELS_AIC[[ind]]<-AICind
+          NIFTY_IT_MODELS_BIC[[ind]]<-BICind
+          NIFTY_IT_MODELS_AICC[[ind]]<-AICcind
+        })
+        
+        print(ind)
+      }
+    }
+  }
+}
+NIFTY_IT_MODELS<-data.frame(matrix(nrow=1296,ncol=7))#1296
+columns<-c("pp","qq","PP","QQ","AIC","BIC","AICC")
+colnames(NIFTY_IT_MODELS)<-columns
+
+NIFTY_IT_MODELS$pp<-as.character(NIFTY_IT_MODELS_p)
+NIFTY_IT_MODELS$qq<-as.character(NIFTY_IT_MODELS_q)
+NIFTY_IT_MODELS$PP<-as.character(NIFTY_IT_MODELS_P)
+NIFTY_IT_MODELS$QQ<-as.character(NIFTY_IT_MODELS_Q)
+NIFTY_IT_MODELS$AIC<-as.character(NIFTY_IT_MODELS_AIC)
+NIFTY_IT_MODELS$BIC<-as.character(NIFTY_IT_MODELS_BIC)
+NIFTY_IT_MODELS$AICC<-as.character(NIFTY_IT_MODELS_AICC)
+#View(NIFTY_IT_MODELS)
+write.csv(NIFTY_IT_MODELS,file = "IT_score.csv",sep=",")
+
+#************
+dat<-read.csv('/home/mahendra/Downloads/sem_3/TSA/project/data/IT_score.csv')
+df<-dat%>%select(X,AIC,AICC,BIC)%>%filter(AIC<0)%>%filter(BIC<0)%>%filter(AICC<0)
+d <- melt(df, id.vars="X")
+ggplot(data=d,
+       aes(x=X, y=value, colour=variable)) +
+  geom_line()+ labs(x="sl no of different combination of ARIMA and GARCH model", y="score",title = "AIC,BIC and AICc score of different model")
+```
+Plot showing AIC,BIC,AICc values
+
+<img src="./Images/AIC.png" align="middle" >
+Now we can short these values according to any of the AIC,BIC or AICc, as we wish.
+Here for example,
+
+<img src="./Images/scores.png" align="middle" >
+
+
 
 
 # `[o] Forcasting with the best model:`
+Now, when we have the order of the model, we can fit that model and can forecast the log-returns with that. 
+Here is the code and result,
+
+
+```
+###***** Best model specification and fitting 
+garch_it <- ugarchspec(mean.model = list(armaOrder=c(4,2)),
+                             variance.model = list(model = 'eGARCH', 
+                             garchOrder = c(4,3)),distribution = 'std')
+fit_garch_it <- ugarchfit(spec = garch_it, data= na.omit(as.vector(Return_it)))
+
+## forecasting
+forecast_it<- ugarchforecast(fit_garch_it,n.ahead = 30)
+#forecast_it@forecast$seriesFor
+
+par(mfrow=c(1,2))
+plot(forecast_it,which=1)
+plot(forecast_it,which=3)
+
+```
+<img src="./Images/Forecast.png" align="middle" >
+
+
+We can go back to the original stock price from the last known data point. here we have done so. We can take the original data (if we can have,   in this case I have forecasted 30 days after 4th October 2021 and now I have the data till 4th November 2021, so I can plot the original data too, and can calculate the rmse for evaluation models). Here is the code:
+
+```
+########### going back to original data 
+end= as.numeric(nifty_it$Close[length(nifty_it$Close)])
+Update<- c(as.numeric(nifty_it$Close))
+original <- Update
+for (i in seq(1,30)){
+  end= end*exp(forecast_it@forecast$seriesFor[i])
+  print(end)
+  Update <- c(Update,end)
+}
+par(mfrow=c(1,1))
+plot(Update,type="l",col="green",main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
+lines(original)
+legend("bottomright",legend = c("forecasted stock values","original privious values"),
+       fill = c("green","black"))
+
+```
+<img src="./Images/prediction.png" align="middle" >
 
 
 
 
 
+**********************************************
+Here we can compare all 4 types of data and can see the cerelation and even can compare among the model used.
+
+```
+################# Comparison among the all 4 data
+#data<-data.frame(NIFTY-IT=as.numeric(nifty_it$Close),NIFTY-BANK=as.numeric(nifty_bank$Close),NIFTY-OIL=as.numeric(nifty_oil$Close),NIFTY-METAL=as.numeric(nifty_metal$Close))
+
+data<- cbind(nifty_it$Close,nifty_bank$Close,nifty_oil$Close,nifty_metal$Close)
+
+colnames(data)<-c("NIFTY-IT","NIFTY-BANK","NIFTY-OIL","NIFTY-METAL")
+correl<-cor(data)
+library(corrplot)
+corrplot(correl, type = "upper", method="square", order = "hclust",
+         tl.col = "black", tl.srt = 30,addCoef.col = "white") 
+```
+
+<img src="./Images/all_data2.png" align="middle" >
+<img src="./Images/corr.png" align="middle" >
+
+ 
 
 
 
-
-
-
-Here Figure 1.1 shows the original time series of the SBI stock index for the period from
-January 3, 2005 to December 28, 2020. Note that this index seems to increase with time,
-but there are some downward periods commonly denoted as bear markets. As from the
-above plot, it is also observed that data is much volatile and there is a sudden fall (crash) in
-stock prices starting from March due to COVID.
-
-In order to study these indices, it is customary in finance to consider the logarithm return,
-which is defined as ****************&****
-where denotes the price or the index value at time t. These returns (i.e. the log returns)
-are displayed in Figure 1.2. where we can observe some great drops/bursts during say 2014
-and some abrupt changes or great volatility during say 2008 and 2018.
-
-Another look at the volatility is shown in Figure 1.3 where the squared log returns,
-are
-plotted. From this graph the high volatility of the SBI is evident during the periods
-mentioned above.
-################################
-
-
-
-One of the assumptions of the ARMA model is that the error term are either strongly or weakly stationary. 
-
-
-The problem is that in real life. This assumption is not always satisfied. Indeed, when looking financial data such as stock market data (AAPL, TESLA, GOOGL) or currency data (EUR/USD, GBP/USD), even indices data ( S&P 500, DAX 30, US30, NASDAQ 100 etc.) and cryptocurrency. Usually these data display an error term which presents a sort of stochastic variation of their volatility over time, meaning that considering the stationarity assumption will lead to a misspecification of the model estimation and therefore will lead to a bad forecast. 
-
-
-GARCH models are usually the one considering such heteroskedasticity of the error terms and the stochastic change of their related volatility. In this post I will describe a simplified version of the GARCH model, also I will show how to estimate such model setting, how to interpret or read the results and how to find the optimal setting.
-
-
-### GARCH Model Setting
-
-GARCH stands for Generalized Autoregressive Conditional Heteroskedasticity Models. GARCH models are commonly used to estimate the volatility of returns for stocks, currencies, indices cryptocurrencies. Professional traders use this tool to price assets and detect which asset will potentially provide the best return in their portfolio. Also they can use this tool to adjust their portfolio allocation and risk management. 
-
-
-There exist a large variety of GARCH model : Standard GARCH (SGARCH), Nonlinear GARCH (NGARCH), Nonlinear Asymetric GARCH (NAGARCH), Integrated GARCH (IGARCH), Exponential GARCH (EGARCH), GARCH in Mean (GARCH-M), Quadratic GARCH (QGARCH), Glosten-Jagannathan-Runke GARCH (GJR-GARCH), Treshold GARCH (TGARCH), Family GARCH (FGARCH), Continuous-time GARCH (COGARCH), Zero drift GARCH (ZDGARCH) etc. I will present only two of these variants : the standard GARCH and the GJR-GARCH models.
-
-
-### The standard GARCH Model
-
-To model the GARCH model, we need to know first how the ARCH model is set. So let us consider the error term e[t] or the residual from the demeaned return. Then the error term is decomposed into two main terms that are the stochastic term z[t] and the time-dependent standard deviation s[t] such that :
-
-
-R[t] = mu + e[t]
-
-e[t] = s[t]*z[t]. 
-
-R[t] is the variable representing the time series of the return of the stock considered, mu is the mean and e[t] is the error term. The variable z[t] is assumed to be a strong white noise process. If we consider that q is the number of lags for the volatility modelling (ARCH(q)), then, we have
-
-
-
-
-Therefore, an ARCH(q) model means that the time-dependent volatility depends on the first q lag squared values of the error term.
-
-
-Then, based on the ARCH(q) model, we can define the model setting of the GARCH. Indeed, the GARCH model is considered when the error variance s[t] is assumed to follow an ARMA process. In that situation, the GARCH(p,q) model with p the number of lags of the s[t] terms and q the number of lags for the ARCH terms e[t]^2. 
-
-
-Therefore, the main difference between the GARCH model and the ARCH model is that the GARCH model consider also the volatility of the previous period, while the ARCH model do not. This is truly important as in the financial market we can usually observe mean reverting patterns of the instruments/variables and this mean-reverting pattern can in some case could happen by respecting a certain average range, meaning that the volatility of the previous periods should be considered.
-
-
-
-
-Then, a GARCH(1,1) is such that 
-
-
-
-and the ARCH(1) model is nothing else than the GARCH(0,1) model.
-
-
-The particularity of the standard GARCH model is that we consider that the conditional error term follows a normal distribution. This is not always the case for all types of data. We usually observe in the financial data more skewed data.  Therefore, we should also consider checking if the residuals follow that pattern. The GARCH model with skewed student t-distribution (STTD) is usually considered as an alternative to the normal distribution in order to check if we have a better model fitting. 
-
-
+<!-- *************
 ### Model Estimation
 
 The estimation of the GARCH model is very simple. Indeed considering a GARCH(p,q) model, we have 4 steps :
@@ -639,22 +764,8 @@ Construct the time series of the squared residuals, e[t]^2.
 Compute and plot the autocorrelation of the squared rediduals e[t]^2.
 
 Estimate  the ARMA (p,q) model for the volatility  s[t] of the residuals based on one of the specified model.
-
-
-
-************************
-Akaike Information Criteria (AIC)
-AIC stands for Akaike Information Criteria, and it’s a statistical measure that we can use to compare different models for their relative quality. It measures the quality of the model in terms of its goodness-of-fit to the data, its simplicity, and how much it relies on the tuning parameters. The formula for AIC is
-
- AIC = 2k - 2l
-
-where l is a log-likelihood, and k is a number of parameters. For example, the AR(p) model has p+1 parameters. From the formula above, we can conclude that AIC prefers a higher log-likelihood that indicates how strong the model is in fitting the data and a simpler model in terms of parameters.
-
-
-Bayesian Information Criteria (BIC)
-In addition to AIC, the BIC (Bayesian Information Criteria) uses one more indicator n that defines the number of samples used for fitting. The formula for BIC is
-
- BIC = klog n - 2l
+*******************
+ -->
 
 
 
