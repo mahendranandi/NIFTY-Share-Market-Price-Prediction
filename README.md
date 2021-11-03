@@ -526,7 +526,7 @@ We have seen that there was no significant correlation in the acf anf pacf plot 
 
 # `[m] Check if Volatility [ARCH effect] is present:`
 
-### `[a] Volatility Clustering (Monthly rolling volatility) :`
+### `[m][a] Volatility Clustering (Monthly rolling volatility) :`
 The next step is to calculate the annualized volatility and the rolling-window volatility of returns. This can be done either at the daily, monthly, quarterly frequency, etc. Here is the code for the monthly. width = 22 (252 for yearly frequency)
 
 ```
@@ -537,7 +537,7 @@ chart.RollingPerformance(na.omit(Return_it),width = 22,FUN = 'sd.annualized',sca
 
 Based on this graph, we can still see that there are months with very high volatility and months with very low volatility, suggesting the stochastic model for conditional volatility.
 
-### `[b] ARCH test`
+### `[m][b] ARCH test`
 ```
 library(FinTS)
 ArchTest(Return_it,lags=1,demean = TRUE)
@@ -555,22 +555,35 @@ Chi-squared = 20.964, df = 1, p-value = 4.679e-06
 
 Now we can run the GARCH model. We can start with the standard GARCH model where we consider the conditional error term is a normal distribution. We use the  function ugarchspec() for the model specification and ugarchfit() for the model fitting. For the standard GARCH model, we specify a constant to mean ARMA model, which means that arma0rder = c(4,0). We consider the GARCH(1,1) model and the distribution of the conditional error term is the normal distribution (will chack also for skewed student t distributuion).
 
-### `[a] Following the distribution of the log-returns`
+### `[n][a] Following the distribution of the log-returns`
 Now we can display the histogram of returns and try to see if the normal distribution could be used for the conditional error term.
+```
+chart.Histogram(return_it,methods = c("add.density","add.normal"),
+                colorset = c("blue","red","black"),
+                main = "histogram of the log-returns of Nifty-IT data")
+legend("topright",legend = c("return","kernel","normal dist"),fill = c("blue","red","black"))
+
+```
 
 <img src="./Images/dist_it" align="middle" >
 
 As we can see, the histogram of the of the returns seems to be more skewed than the normal distribution, meaning that considering the normal distribution for the returns is not a good choice. The student distribution  tends to be the more adapted for this distribution. We will see if that is confirmed by the model estimation. 
 
 ```
+############## QQ Plot ##############
+ggplot(data=nifty_it, aes(sample = as.vector(Return_it))) +
+  stat_qq() +
+  stat_qq_line(col='red') + ggtitle('QQ plot of Nifty-IT Returns')
 
 ```
+<img src="./Images/qq.png" align="middle" >
 
+we can also check the qq plot to visualize the distribution it follows.
 
-### `[b] Guess about the order of the model ( IF POSSIBLE ):`
+### `[n][b] Guess about the order of the model ( IF POSSIBLE ):`
 We here will do a sofisticated way of choosing the order of the ARMA + GARH model. We initially fit the best ARMA model alone. But we will se that when we incorporate the GARCH model the order will no more be best for the combination model.
 
-### `[c] AIC,AICc,BIC value:`
+### `[n][c] AIC,AICc,BIC value:`
 
 - [ ] **Akaike Information Criteria (AIC)**
 AIC stands for Akaike Information Criteria, and it’s a statistical measure that we can use to compare different models for their relative quality. It measures the quality of the model in terms of its goodness-of-fit to the data, its simplicity, and how much it relies on the tuning parameters. AIC is calculated from:
@@ -601,7 +614,7 @@ The formula for AICc is as follows
 
 
 
-### `[d] choosing the best model :`
+### `[n][d] choosing the best model :`
 SO, to choose the best model we need to find the model having minimum information criterion. As you can see from the code below, we have taken all possible combination of the orders and collected all types of information criterion in a dataframe to compare.
 
 ```
