@@ -148,7 +148,7 @@ The following steps are to be followed:
 3. chechiking stationarity of the residuals
 4. fitting best ARIMA model
 5. if residuals are stationary but there is still volatility is present check if ARCH effect is present or not
-6. if present then to model the variance use GARCH model
+6. if present then use log-returns to model the variance using GARCH model
 7. choosing best ARMIA + GARCH model to model mean and variance at the same time.
 
 
