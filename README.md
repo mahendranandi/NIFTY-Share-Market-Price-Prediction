@@ -707,27 +707,113 @@ plot(forecast_it,which=3)
 We can go back to the original stock price from the last known data point. here we have done so. We can take the original data (if we can have,   in this case I have forecasted 30 days after 4th October 2021 and now I have the data till 4th November 2021, so I can plot the original data too, and can calculate the rmse for evaluation models). Here is the code:
 
 ```
+
 ########### going back to original data 
+
 end= as.numeric(nifty_it$Close[length(nifty_it$Close)])
-Update<- c(as.numeric(nifty_it$Close))
-original <- Update
-for (i in seq(1,30)){
+#Update<- c(as.numeric(nifty_it$Close))
+
+nifty_It <- read.csv('/home/mahendra/Downloads/sem_3/TSA/project/data/It_data.csv')
+nifty_It <- nifty_It[852:1251,c(3,7)]
+nifty_It[,1] <- dmy(nifty_It[,1])
+original_It <- nifty_It$Close
+Update <- c()
+for (i in seq(1,18)){
   end= end*exp(forecast_it@forecast$seriesFor[i])
   print(end)
   Update <- c(Update,end)
 }
 par(mfrow=c(1,1))
-plot(Update,type="l",col="green",main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
-lines(original)
-legend("bottomright",legend = c("forecasted stock values","original privious values"),
-       fill = c("green","black"))
+#plot(Update,type="p",col="green",main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
+#lines(original)
+
+plot(c(1:382),original_It[1:382],type="l",col="black",xlim=c(1,420),ylim=c(10000,45000),main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
+lines(c(383:400),original_It[383:400],type="l",col="green")
+lines(c(383:400),Update,type="p",col="red")
+legend("bottomright",legend = c("forecasted stock values","original privious values","original future ground truths"),
+       fill = c("red","black","green"))
+
 
 ```
 <img src="./Images/prediction.png" align="middle" >
 
+If we calculate one time stamp ahead at each time stamp taking the original value every time, we will get this..
+
+```
+## RMSE
+nifty_It<- read.csv('/home/mahendra/Downloads/sem_3/TSA/project/data/It_data.csv')
+nifty_It <- nifty_It[852:1251,c(3,7)]
+nifty_It[,1] <- dmy(nifty_It[,1])
+tso_It <- zoo(nifty_It$Close, nifty_It$Date)
+Return_It=CalculateReturns(tso_It, method = 'log')
+true_returns <- na.omit(as.vector(Return_It))
+#Return_It <- Return_It[-c(1)]
+#length(Return_It)  #---> 400
+#length(true_returns)  #---> 399
+
+predicted_returns <- c()
+predicted_stocks <- c()
+total_sqr_loss_in_returns <- 0
+total_sqr_loss_in_stock <- 0
+
+for (i in seq(1,18)){
+  fit_garch_it <- ugarchfit(spec = garch_it, data = true_returns[1:(381-1+i)] )
+  forecast_it<- ugarchforecast(fit_garch_it,n.ahead = 1 )
+  pred_return=forecast_it@forecast$seriesFor[1]
+  predicted_returns= c(predicted_returns,pred_return)
+  sqr_loss_return= (pred_return - true_returns[381+i])^2
+  total_sqr_loss_in_returns = total_sqr_loss_in_returns + sqr_loss_return
+  
+  
+  previous_stock = nifty_It$Close[382-1+i]
+  pred_stock = previous_stock*exp(pred_return)
+  predicted_stocks <- c( predicted_stocks, pred_stock)
+  print(pred_stock)
+  sqr_loss_stock= (pred_stock - nifty_It$Close[382+i])^2
+  total_sqr_loss_in_stock = total_sqr_loss_in_stock + sqr_loss_stock
+}
+
+predicted_returns
+predicted_stocks
+(total_sqr_loss_in_returns^0.5)/length(predicted_returns)
+(total_sqr_loss_in_stock^0.5)/length(predicted_stocks)
+
+plot(c(1:382),original_It[1:382],type="l",col="black",xlim=c(1,420),ylim=c(10000,45000),main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
+lines(c(383:400),original_It[383:400],type="l",col="green")
+lines(c(383:400),predicted_stocks,type="l",col="red")
+legend("bottomright",legend = c("forecasted stock values","original privious values","original future ground truths"),
+       fill = c("red","black","green"))
+
+## zoom in
+plot(c(1:382),original_It[1:382],type="l",col="black",xlim=c(370,420),ylim=c(17000,45000),main="Forcasting the original stock value",xlab="time point",ylab="close price of nifty-it ",xaxt='n')
+lines(c(383:400),original_It[383:400],type="b",col="green")
+lines(c(383:400),predicted_stocks,type="b",col="red")
+legend("bottomright",legend = c("forecasted stock values","original privious values","original future ground truths"),
+       fill = c("red","black","green"))
 
 
+```
+result:
+```
+> predicted_returns
+ [1]  0.0015065855  0.0030877579  0.0029886333  0.0021534011  0.0006221464 -0.0047494718
+ [7]  0.0082615880  0.0037898082 -0.0042316305  0.0057174600 -0.0013115903  0.0006450143
+[13]  0.0021308663  0.0073809522  0.0049697998  0.0014630859  0.0015714889  0.0012539987
+> predicted_stocks
+ [1] 35179.11 35654.22 35180.79 35780.82 36424.65 35013.26 35159.02 35419.58 35593.86 36514.52
+[11] 37057.71 36870.57 35990.21 35656.86 35179.80 35213.83 35559.74 34957.41
+> (total_sqr_loss_in_returns^0.5)/length(predicted_returns)
+[1] 0.003872366
+> (total_sqr_loss_in_stock^0.5)/length(predicted_stocks)
+[1] 138.5475
+```
 
+
+<img src="./Images/prediction2.png" align="middle" >
+
+if we zoom in , we can compare clearly,
+
+<img src="./Images/prediction3.png" align="middle" >
 
 **********************************************
 Here we can compare all 4 types of data and can see the cerelation and even can compare among the model used.
