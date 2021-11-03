@@ -31,7 +31,7 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
     - `[a] Following the distribution of the log-returns`
     - `[b] Guess about the order of the model ( IF POSSIBLE )`
     - `[c] AIC,AICc,BIC value`
-    - `[d] choosing the best model `
+    - `[d] choosing the best model ` 
 - `[o] Forcasting with the best model`
 - `[p] References`
 
