@@ -49,6 +49,12 @@ Time series analysis on NIFTY data ( bank,oil,metal,it ) using GARCH model in R.
 
 Time series analysis is a statistical technique that deals with time series data, or trend analysis.  Time series data means that data is in a series of  particular time periods or intervals. This is a specific way in which analysts record data points at consistent intervals over a set period of time rather than just recording the data points intermittently or randomly. What sets time series data apart from other data is that the analysis can show how variables change over time. In other words, time is a crucial variable because it shows how the data adjusts over the course of the data points as well as the final results. It provides an additional source of information and a set order of dependencies between the data.
     Time series analysis typically requires a large number of data points to ensure consistency and reliability. An extensive data set ensures you have a representative sample size and that analysis can cut through noisy data. It also ensures that any trends or patterns discovered are not outliers and can account for seasonal variance. Additionally, time series data can be used for forecasting—predicting future data based on historical data.
+    
+    The Box-Jenkins Model, for instance, is a technique designed to forecast data ranges based on inputs from a specified time series. It forecasts data using three principles, autoregression, differencing, and moving averages. These three principles are known as p, d, and q respectively. Each principle is used in the Box-Jenkins analysis and together they are collectively shown as an autoregressive integrated moving average, or ARIMA (p, d, q). ARIMA can be used, for instance, to forecast stock prices or earnings growth.
+    
+    Another method, known as rescaled range analysis, can be used to detect and evaluate the amount of persistence, randomness, or mean reversion in time series data. The rescaled range can be used to extrapolate a future value or average for the data to see if a trend is stable or likely to reverse.
+    
+    Exponential smoothing is a time series forecasting method for univariate data that can be extended to support data with a systematic trend or seasonal component. It is a powerful forecasting method that may be used as an alternative to the popular Box-Jenkins ARIMA family of methods.
 
     Examples of time series analysis in action include:
     Weather data
